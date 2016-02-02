@@ -1,0 +1,25 @@
+% Version 1.00
+
+\NeedsTeXFormat{LaTeX2e}[1994/12/01]
+\ProvidesPackage{vocabulaire}
+
+\RequirePackage[francais]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+
+% Prénoms et noms des acteurs principaux de fichier
+\newcommand{\bastien}[0]{\textsc{Bastien Laine}}
+\newcommand{\damien}[0]{\textsc{Damien Pointin}}
+\newcommand{\anatole}[0]{\textsc{Anatole Chaumont-Frelet}}
+
+%Def de l'quipe
+\newcommand{\equipe}[0]{\anatole{} \\ \bastien{} \\ \damien{}}
+
+% Vocabulaire spécifique classé par ordre alphabétique du mot représenté
+
+\newcommand{\gmLong}[0]{Génie Mathématique}
+\newcommand{\gm}[0]{GM}
+\newcommand{\insaRouen}[0]{KAIST}
+\newcommand{\titreLong}[0]{Projet d'Intelligence Artificielle}
+\newcommand{\titre}[0]{Pré-Rapport}
+\endinput

@@ -1,0 +1,57 @@
+\pdfminorversion=4
+\usepackage[francais]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{pdfpages}
+\usepackage{float}
+\usepackage{diagbox}
+\usepackage[urlcolor=blue, linkcolor=black,linktoc=all, colorlinks=true]{hyperref}
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm, headheight=15pt]{geometry}
+\usepackage[final]{pdfpages}
+\usepackage{helvet}
+\usepackage{lscape}
+\usepackage{wasysym}
+\usepackage[multidot]{grffile}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\makeatletter
+\def\@makechapterhead#1{% chapter
+  \vspace*{5\p@}
+  {
+    \parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+    \huge\bfseries \@chapapp\space \thechapter
+    \par\nobreak
+    \vskip 5\p@
+    \fi
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 10\p@
+    \thispagestyle{fancy}% Permet d'ajouter l'entête de pied de page
+  }
+}
+
+\def\@schapter#1{
+  \if@twocolumn
+  \@topnewpage[\@makeschapterhead{#1}]
+  \else
+  \@makeschapterhead{#1}
+  \@afterheading
+  \fi
+}
+
+\def\@makeschapterhead#1{% chapter*
+  \vspace*{5\p@}
+  {
+    \parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par\nobreak
+    \vskip 10\p@
+    \thispagestyle{fancy} % Permet d'ajouter l'entête de pied de page
+  }
+}
+\makeatother

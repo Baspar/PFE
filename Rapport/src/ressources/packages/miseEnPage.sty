@@ -1,0 +1,180 @@
+% Version 1.00
+% Auteur tantPic
+
+\NeedsTeXFormat{LaTeX2e}[1999/01/01]
+\ProvidesPackage{packages/miseEnPage}[2014/08/02]
+
+\RequirePackage{boxedminipage}
+\RequirePackage{graphicx}
+\RequirePackage{color}
+\RequirePackage{tabularx}
+\RequirePackage{fancyhdr}
+\RequirePackage[francais]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[final]{pdfpages}
+\RequirePackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\RequirePackage{lastpage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%                                     % 
+%       Définition des couleurs       %
+%                                     % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+
+\definecolor{bleuInformatique}{rgb}{0.369,0.769,0.930}
+\definecolor{grisInsa}{gray}{0.5}
+
+\definecolor{INSA_CYAN}{cmyk}{0.6,0,0,0}
+\definecolor{INSA_MARINE}{cmyk}{0.95,0.69,0.35,0.19}
+\definecolor{INSA_GREY}{cmyk}{0.71,0.65,064,0.19}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%                                     % 
+%         Définition listings         %
+%                                     % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\usepackage{listings}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+\newcommand{\auteurs}{}
+\newcommand{\numeroPage}{\begin{minipage}{5cm}\raggedright \fontsize{14pt}{14pt}\selectfont \textcolor{white}{ \thepage{} | \pageref*{LastPage}} \end{minipage}}
+\newcommand{\equipePremierePage}{\begin{minipage}{5cm}\raggedleft \equipe{} \end{minipage}}
+\newcommand{\proprieteINSA}{
+    \begin{minipage}{20cm}
+        \raggedleft \scriptsize 
+        \textit{Ce document est la propriété du département \gm{} de l'\insaRouen{} et\\ ne peut être ni reproduit, ni communiqué à des tiers sans autorisation préalable}
+    \end{minipage}
+}
+\newcommand{\aujourdhui}{
+    \begin{minipage}{20cm}
+        \raggedleft \scriptsize 
+        \textit{\today{}}
+    \end{minipage}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                   %
+%  Définition du style des pages    %
+%                                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Style général des pages %%
+
+\fancypagestyle{pageCouverture}{
+    \fancyhf{}
+    \renewcommand{\footrulewidth}{0pt}
+    \renewcommand{\headrulewidth}{0pt}
+}
+
+
+\newcommand{\couverture}{
+    \thispagestyle{pageCouverture}
+
+
+    \begin{picture}(0,0)
+        % Images
+        %\put(-250,-600){\includegraphics[width=412mm]{ressources/images/wall.jpg}}
+        \put(-300,-600){\includegraphics[width=400mm]{ressources/images/wall.jpg}}
+        \put(-94,-750){\includegraphics[width=221mm]{ressources/images/pageGarde.png}}
+
+        % Noms
+        \put(-25, 0){\equipePremierePage{}}
+
+        % Gros titre
+        \put(-45,-220){\begin{minipage}[t]{150mm}\begin{flushleft}
+            \textcolor{white}{
+            \fontsize{57pt}{60pt}\selectfont \textbf{\titreLong} \\
+            \vspace*{20pt}}
+        \end{flushleft}\end{minipage}}
+
+        % Sous titre
+        \put(60,-510){\begin{minipage}[t]{150mm}\textcolor{INSA_MARINE}{\begin{flushleft}
+            \fontsize{57pt}{60pt}\selectfont \textbf{\titre}\\
+            \vspace*{17pt}
+        \end{flushleft}}\end{minipage}}
+    \end{picture}
+    \newpage
+}
+
+\fancypagestyle{pageNormale}{
+    \fancyhf{}
+    \fancyhead[L]{\itshape \titreLong{}}
+    \fancyhead[R]{\itshape \today{}}
+
+    \renewcommand{\headrulewidth}{0.2pt}
+
+    \fancyfoot[C]{
+        \begin{picture}(0,0)
+            \put(-160,-42){\includegraphics[width=49mm]{ressources/images/PiedDePage.pdf}}
+            \put(-155,-34){\numeroPage{}}
+            \put(-300,-30){\proprieteINSA{}}
+        \end{picture}
+    }
+
+    \renewcommand{\topfraction}{0.85}
+    \renewcommand{\textfraction}{0.1}
+    \renewcommand{\floatpagefraction}{0.75}
+}
+
+\newcommand{\pageQuatriemeCouverture}[0]{
+    \newpage
+    \newpage
+    \restoregeometry
+    \thispagestyle{empty}
+    \begin{picture}(0,0)
+        \put(-100,-770){\includegraphics[width=225mm]{ressources/images/QuatriemeDeCouverture.pdf}}
+        \put(-55,-430){
+        \begin{minipage}[t]{115mm}\textcolor{INSA_MARINE}{\begin{flushleft}
+            \fontsize{18pt}{18pt}\selectfont \textbf{RENSEIGNEMENTS}\\
+            \fontsize{18pt}{18pt}\selectfont Département GM\\
+            \fontsize{18pt}{18pt}\selectfont 02.32.95.65.31\\
+            \fontsize{18pt}{18pt}\selectfont gm@insa-rouen.fr\\
+        \end{flushleft}}\end{minipage}
+        }
+        \put(-50, -600){
+            \begin{minipage}[t]{115mm}\textcolor{INSA_MARINE}{\begin{flushleft}
+                \textbf{INSA Rouen}\\
+                Campus du Madrillet\\
+                685 avenue de l’Université – BP 08\\
+                76801 SAINT-ÉTIENNE-DU-ROUVRAY cedex\\
+                \textbf{www.insa-rouen.fr}\\
+            \end{flushleft}}\end{minipage}
+        }
+        \put(63, -763){\includegraphics[width=49mm]{ressources/images/PiedDePage.pdf}}
+    \end{picture}
+}
+
+\endinput

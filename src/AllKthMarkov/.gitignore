@@ -1,0 +1,7 @@
+uml/Classe*.uml
+src/*.o
+bin/Main
+bin/save
+bin/d
+diagrammes/*.uml
+diagrammes/*.png

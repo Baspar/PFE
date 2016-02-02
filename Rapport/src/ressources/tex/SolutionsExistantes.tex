@@ -1,0 +1,42 @@
+\chapter{Solution existantes}
+    Dans le but de mieux comprendre les tenants et les aboutissants de cette problématique, un tour d'horizon (non exhaustif) des solutions déjà en place est nécessaire.
+    \begin{enumerate}
+        \item La classification naïve bayésienne
+    \end{enumerate}
+    \section{Classification naïve bayésienne}
+        \subsection{Présentation de la méthode}
+            Le but de cette classification est de pouvoir classifier des données en deux ensemble distincts.\\
+            L'exemple d'utilisation de cette technique le plus connu serait la répartition des mails en deux catégories:
+            \begin{itemize}
+                \item Les \textbf{spam}
+                \item Les \textbf{ham} (non-spam)
+            \end{itemize}
+            Cette technique est dite \textbf{d'apprentissage supervisé}, c'est à dire que l'algorithme apprends par lui même en lui donnant \textbf{des exemples} accompagnés de \textbf{la catégorie à laquelle ils appartiennent}
+        \subsection{Fonctionnement}
+            Le but est de calculer, basé sur son contenu, la probabilité qu'un document soit dans la classe 1, puis 2, ...\\
+            Une fois cela calculé, il suffit de prendre la classe dont la probabilité est maximum.\\
+            Mathématiquement, cela donne:
+            \[
+                \begin{array}{rcl}
+                    P(C=c|Doc) &=& \frac{P(Doc|C=c)P(C=c)}{P(Doc)}\\
+                    &=& P(Doc|C=c)P(C=c) \text{ (P(Doc) est indépendant de la classe considérée)} \\
+                    &=& P(C=c)\prod_{\forall mot w\in Doc}P(w|C=c)\text{ (Principe du bayésien naïf)}\\
+                    &=& P(C=c)\prod_{\forall mot w\in Doc}\frac{P(w, C=c)}{P(w)}
+                \end{array}
+            \]
+            Il ne nous reste plus qu'à savoir calculer ces probabilités:
+            \begin{description}
+                \item[P(C=c)]: $\frac{\text{\# exemples où C=c}}{\text{\# exemples total}}$
+                \item[P(w, C=c)]:  $\frac{\text{}}{\text{}}$%TODO
+                \item[P(w)]: $\frac{\text{\# mot w dans Doc}}{\text{\# mot total dans Doc}}$
+            \end{description}
+        \subsection{Application à notre problématique}
+            Dans notre cas, une classification naïve pourrait être effectuée pour \textbf{chaque document} du corpus, avec ses propres ensembles de mot pour calculer les probabilités.\\
+            À chaque document, l'utilisateur se verrait proposer différent documents (Correspondant à ceux dont la probabilité d'être pertinent est la plus grande), sur lesquels il pourrait effectuer 2 actions:
+            \begin{itemize}
+                \item Les \textbf{marquer comme ``non pertinent''} (Ce qui aura pour effet de les faire disparaitre de la liste)
+                \item Les \textbf{consulter} (Ce qui le marquera comme \textbf{``pertinents''})
+            \end{itemize}
+            Dans les deux cas, ils seraient pris à nouveau en compte lors du calcul des nouvelles probabilités.
+        \subsection{Limites et incompatibilités}
+            Ce système peut poser certains problèmes dans notre utilisation, mais qui peuvent être contournés:
