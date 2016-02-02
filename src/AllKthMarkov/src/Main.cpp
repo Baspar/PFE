@@ -14,7 +14,7 @@ void affichageNextDocs(vector<vector<pair<int, float>>> out, vector<int> session
 
     for(int k=session.size()-1; k>=0; k--){
         vector<pair<int, float>> listeDocs = out[4-1-k];
-        cout << "|=> Markov d'odre " << k << " (" ;
+        cout << "|=> Markov d'odre " << (k+1) << " (" ;
         for(int doc : session)
             cout << doc << ",";
         cout << "):" << endl;
@@ -31,9 +31,9 @@ void affichageNextDocsNotVerbose(vector<vector<pair<int, float>>> out){
         if(listeDocs.size()!=0){
             for(pair<int, float> doc:listeDocs)
                 cout << doc.second << "_" <<doc.first << "_" << (k+1) << " ";
-            cout << endl;
         }
     }
+    cout << endl;
 }
 int main(int argc, char* argv[]){
     int K=4;
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
     char operation=' ';
     do{
         if(verbose)
-            cout << endl << "Rentrez une operation ([r]equete, [s]ession, [p]lantuml, [q]uitter): ";
+            cout << endl << "Rentrez une operation ([r]equete, [s]ession, [u]ml, [q]uitter): ";
         cin >> operation;
         switch (operation) {
             case 's':
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
                         }
                         markovs.ajouterSession(session);
                         break;
-            case 'p':
+            case 'u':
                         if(verbose)
                             cout << "Generation des diagrammes UML..." << endl;
                         for(int i=1; i<=K; i++){
