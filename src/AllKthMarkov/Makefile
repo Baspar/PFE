@@ -1,6 +1,6 @@
 GCC=g++ --std=c++11
 
-all: main
+all: main pseudoclean
 
 main: src/AllKthMarkov.o src/KthMarkov.o src/MarkovNode.o
 	$(GCC) src/Main.cpp $^ -o bin/Main
