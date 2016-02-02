@@ -25,34 +25,45 @@ void affichageNextDocs(vector<vector<pair<int, float>>> out, vector<int> session
 
     }
 }
-int main(){
+int main(int argc, char* argv[]){
     int K=4;
 
-    //AllKthMarkov markovs(K);
+    bool verbose=true;
+    if(argc>1)
+        if(argv[1][0]=='-' && argv[1][1]=='v')
+            verbose=false;
+
+
     AllKthMarkov markovs("save");
 
     vector<int> session;
     int nbDoc;
     char operation=' ';
     do{
-        cout << endl << "Rentrez une operation ([r]equete, [s]ession, [p]lantuml, [q]uitter): ";
+        if(verbose)
+            cout << endl << "Rentrez une operation ([r]equete, [s]ession, [p]lantuml, [q]uitter): ";
         cin >> operation;
         switch (operation) {
             case 's':
-                        cout << "Rentrez la longueur de votre session: ";
+                        if(verbose)
+                            cout << "Rentrez la longueur de votre session: ";
                         cin >> nbDoc;
                         session.resize(nbDoc);
-                        cout << "Rentrez les differents documents de votre sessions:" << endl;
+                        if(verbose)
+                            cout << "Rentrez les differents documents de votre sessions:" << endl;
                         for(int i=0; i<nbDoc; i++){
-                            cout << "  "<< i << ": ";
+                            if(verbose)
+                                cout << "  "<< i << ": ";
                             cin >> session[i];
                         }
                         markovs.ajouterSession(session);
                         break;
             case 'p':
-                        cout << "Generation des diagrammes UML..." << endl;
+                        if(verbose)
+                            cout << "Generation des diagrammes UML..." << endl;
                         for(int i=1; i<=K; i++){
-                            cout << "  Diagramme markov " << i << "...";
+                            if(verbose)
+                                cout << "  Diagramme markov " << i << "...";
                             ofstream fichierUML("../diagrammes/diag"+to_string(i)+".uml", ios::out | ios::trunc);
                             if(fichierUML){
                                 fichierUML << "digraph markov"+to_string(i)+"{" << endl;
@@ -60,16 +71,20 @@ int main(){
                                 fichierUML << "}" << endl;
                                 fichierUML.close();
                             }
-                            cout << " OK" << endl;
+                            if(verbose)
+                                cout << " OK" << endl;
                         }
                         break;
             case 'r':
-                        cout << "Rentrez la longueur de votre session: ";
+                        if(verbose)
+                            cout << "Rentrez la longueur de votre session: ";
                         cin >> nbDoc;
                         session.resize(nbDoc);
-                        cout << "Rentrez les differents documents de votre sessions:" << endl;
+                        if(verbose)
+                            cout << "Rentrez les differents documents de votre sessions:" << endl;
                         for(int i=0; i<nbDoc; i++){
-                            cout << "  "<< i << ": ";
+                            if(verbose)
+                                cout << "  "<< i << ": ";
                             cin >> session[i];
                         }
                         vector<vector<pair<int, float>>> out=markovs.guessNextDocs(session);
@@ -78,9 +93,6 @@ int main(){
                         break;
         }
     } while(operation!='q');
-
-
-
 
     ofstream fichierSave("save", ios::out | ios::trunc);
     fichierSave << "Format du fichier:" << endl;
@@ -102,4 +114,5 @@ int main(){
         fichierSave << markovs.getMarkov(i)->toSave() << endl;
     fichierSave.close();
 
+    return 0;
 }
