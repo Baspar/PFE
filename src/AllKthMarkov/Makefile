@@ -12,4 +12,4 @@ pseudoclean:
 	rm -f src/*.o
 
 clean: pseudoclean
-	rm -f bin/Main bin/d bin/save diagrammes/diag*
+	rm -f bin/Main bin/d bin/save diagrammes/diag* bin/docs/*.pdf
