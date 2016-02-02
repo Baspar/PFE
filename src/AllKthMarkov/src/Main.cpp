@@ -25,6 +25,17 @@ void affichageNextDocs(vector<vector<pair<int, float>>> out, vector<int> session
 
     }
 }
+void affichageNextDocsNotVerbose(vector<vector<pair<int, float>>> out){
+    for(int k=3; k>=0; k--){
+        vector<pair<int, float>> listeDocs = out[4-1-k];
+        if(listeDocs.size()!=0){
+            for(pair<int, float> doc:listeDocs)
+                cout << doc.first << " ";
+            cout << endl;
+            return;
+        }
+    }
+}
 int main(int argc, char* argv[]){
     int K=4;
 
@@ -50,7 +61,7 @@ int main(int argc, char* argv[]){
                         cin >> nbDoc;
                         session.resize(nbDoc);
                         if(verbose)
-                            cout << "Rentrez les differents documents de votre sessions:" << endl;
+                            cout << "Rentrez les differents documents de votre session:" << endl;
                         for(int i=0; i<nbDoc; i++){
                             if(verbose)
                                 cout << "  "<< i << ": ";
@@ -88,7 +99,10 @@ int main(int argc, char* argv[]){
                             cin >> session[i];
                         }
                         vector<vector<pair<int, float>>> out=markovs.guessNextDocs(session);
-                        affichageNextDocs(out, session);
+                        if(verbose)
+                            affichageNextDocs(out, session);
+                        else
+                            affichageNextDocsNotVerbose(out);
 
                         break;
         }

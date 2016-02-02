@@ -96,11 +96,6 @@ void AllKthMarkov::ajouterSession(vector<int> session){//DONE
 }
 vector<vector<pair<int,float>>> AllKthMarkov::guessNextDocs(vector<int> session){//DONE
     //Debug
-    cout << "Votre session est (";
-    for(int i:session)
-        cout << i << ",";
-    cout << ")" << endl;
-
     vector<vector<pair<int,float> > > out;
 
     //On ne recupère que les K+1 derniers documents
