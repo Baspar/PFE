@@ -30,9 +30,8 @@ void affichageNextDocsNotVerbose(vector<vector<pair<int, float>>> out){
         vector<pair<int, float>> listeDocs = out[4-1-k];
         if(listeDocs.size()!=0){
             for(pair<int, float> doc:listeDocs)
-                cout << doc.first << " ";
+                cout << doc.second << "_" <<doc.first << "_" << (k+1) << " ";
             cout << endl;
-            return;
         }
     }
 }
