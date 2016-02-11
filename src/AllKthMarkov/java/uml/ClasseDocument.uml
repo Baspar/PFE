@@ -1,0 +1,13 @@
+@startuml
+class Document{
+    ==<b>Attributes</b>==
+        - categorie : int
+        - id : int
+    ==<b>Constructors</b>==
+        +<color:green>Document(int id, int categorie)</color>
+    ==<b>Getters</b>==
+        +<color:green>getCategorie() : int</color>
+        +<color:green>getId() : int</color>
+}
+@enduml
+'895dcd0acd09026444b0a4ddff92e3ad  -

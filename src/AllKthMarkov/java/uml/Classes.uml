@@ -1,0 +1,7 @@
+@startuml
+!include skin.uml
+!include links.uml
+!include ClasseDocument.uml
+!include ClasseKthMarkov.uml
+!include ClasseMarkovNode.uml
+@enduml

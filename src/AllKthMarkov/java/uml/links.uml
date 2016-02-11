@@ -1,0 +1,8 @@
+X *-- User
+X *-- Group
+Group o-- User
+X *-- Document
+User *-- AllKthMarkov
+AllKthMarkov *-- KthMarkov
+KthMarkov *-- MarkovNode
+MarkovNode *-- MarkovNode

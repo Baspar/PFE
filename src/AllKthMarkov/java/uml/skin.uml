@@ -60,3 +60,6 @@ skinparam database {
   ArrowColor #758A9F
   BorderColor #9E9E9E
 }
+
+hide empty attribute
+hide empty methods
