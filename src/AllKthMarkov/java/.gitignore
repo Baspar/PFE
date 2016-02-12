@@ -1,0 +1,6 @@
+uml/Classe*.uml
+src/*.class
+bin/Main
+bin/save
+bin/d
+Classes.png

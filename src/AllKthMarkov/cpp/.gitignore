@@ -3,5 +3,4 @@ src/*.o
 bin/Main
 bin/save
 bin/d
-diagrammes/*.uml
-diagrammes/*.png
+Classes.png
