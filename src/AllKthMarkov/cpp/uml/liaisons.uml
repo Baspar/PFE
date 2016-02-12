@@ -1,0 +1,3 @@
+AllKthMarkov o-- KthMarkov
+KthMarkov o-- MarkovNode
+MarkovNode *- MarkovNode
