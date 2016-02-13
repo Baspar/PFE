@@ -75,8 +75,26 @@ public class KthMarkov{
         }
         return out;
     }
-    public String toUML(){//TODO
+public String toUML(){//DONE
         String out="";
+
+        for(Map.Entry<Vector<Document>, MarkovNode> node:nodes.entrySet()){
+            for(Map.Entry<MarkovNode, Integer> child : node.getValue().getChild().entrySet()){
+                out += "  <";
+
+                for(Document doc:node.getKey())
+                    out += doc.getId()+",";
+
+                out += "> -> <";
+
+                for(Document doc: child.getKey().getMaChaineDoc())
+                    out += doc.getId()+",";
+
+                out += "> [label=\"";
+                out += ((float)child.getValue()/(float)node.getValue().getTotal());
+                out += "\"]\n";
+            }
+        }
         return out;
     }
 }
