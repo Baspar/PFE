@@ -34,8 +34,21 @@ public class AllKthMarkov{
             }
         }
     }
-    public Vector<Vector<Pair<Integer, Float>>> guessNextDocs(Vector<Document> session){//TODO
+    public Vector<Vector<Pair<Integer, Float>>> guessNextDocs(Vector<Document> session){//DONE
         Vector<Vector<Pair<Integer, Float>>> out = new Vector<Vector<Pair<Integer, Float>>>();
+        Vector<Document> usedSession = new Vector<Document>();
+
+        for(int i=0; i<Math.min(K, session.size()); i++)
+            usedSession.push_back(session.get(i));
+
+        for(int longueurSession=usedSession.size()-1; longueurSession>=0; i--){
+            MarkovNode markovNode = markovs.get(i).getDocs(usedSession);
+            if(markovNode != null)
+                out.add(markovNode.guessNextDocs());
+            else
+                out.add(new Vector<Pair<Int, Float>>());
+        }
+
         return out;
     }
 }
