@@ -54,4 +54,7 @@ public class User{
             userVector.set(i, userVector.get(i)/sessionsVector.size());
         }
     }
+    public Vector<Double> getUserVector(){//DONE
+        return userVector;
+    }
 }
