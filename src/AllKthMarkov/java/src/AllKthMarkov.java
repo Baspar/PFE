@@ -12,7 +12,7 @@ public class AllKthMarkov{
     private void ajouterDocs(int K, Vector<Document> oldDocs, Document nextDoc){//DONE
         markovs.get(K-1).renforcerChaine(oldDocs, nextDoc);
     }
-    public void ajouterSession(Vector<Document> session){//CHK
+    public void ajouterSession(Vector<Document> session){//DONE
         Vector<Vector<Document>> oldDocs = new Vector<Vector<Document>>(K);
         Vector<Document> nextDocs = new Vector<Document>();
 
@@ -27,26 +27,26 @@ public class AllKthMarkov{
                 nextDocs.set(k-1, doc);
 
                 if(oldDocs.get(k-1).size() > k)
-                    oldDocs.get(k-1).erase(oldDocs.get(k-1).begin());//TODO
+                    oldDocs.get(k-1).remove(0);//TODO
 
                 if(oldDocs.get(k-1).size() == k)
                     ajouterDocs(k, oldDocs.get(k-1), nextDocs.get(k-1));
             }
         }
     }
-    public Vector<Vector<Pair<Integer, Float>>> guessNextDocs(Vector<Document> session){//DONE
-        Vector<Vector<Pair<Integer, Float>>> out = new Vector<Vector<Pair<Integer, Float>>>();
+    public Vector<Vector<Pair<Document, Float>>> guessNextDocs(Vector<Document> session){//DONE
+        Vector<Vector<Pair<Document, Float>>> out = new Vector<Vector<Pair<Document, Float>>>();
         Vector<Document> usedSession = new Vector<Document>();
 
         for(int i=0; i<Math.min(K, session.size()); i++)
-            usedSession.push_back(session.get(i));
+            usedSession.add(session.get(i));
 
-        for(int longueurSession=usedSession.size()-1; longueurSession>=0; i--){
-            MarkovNode markovNode = markovs.get(i).getDocs(usedSession);
+        for(int longueurSession=usedSession.size()-1; longueurSession>=0; longueurSession--){
+            MarkovNode markovNode = markovs.get(longueurSession).getDocs(usedSession);
             if(markovNode != null)
                 out.add(markovNode.guessNextDocs());
             else
-                out.add(new Vector<Pair<Int, Float>>());
+                out.add(new Vector<Pair<Document, Float>>());
         }
 
         return out;
