@@ -13,7 +13,7 @@ public class KthMarkov{
 
     //Getter
     public MarkovNode getDocs(Vector<Document> docs){//DONE
-        if(!nodes.contains(docs))
+        if(!nodes.containsKey(docs))
             nodes.put(docs, new MarkovNode(docs));
         return nodes.get(docs);
     }
@@ -27,7 +27,7 @@ public class KthMarkov{
         while(markovNodes.hasMoreElements()){
             MarkovNode mn = markovNodes.nextElement();
             MarkovNode pere = getDocs(mn.getMaChaineDoc());
-            for(Map.Entry<MarkovNode, Integer> ent : pere.getChild().entrySet()){
+            for(Map.Entry<MarkovNode, Integer> ent : mn.getChild().entrySet()){
                 MarkovNode child = getDocs(ent.getKey().getMaChaineDoc());
                 pere.renforcerChaine(child, ent.getValue());
             }
@@ -47,7 +47,6 @@ public class KthMarkov{
         //Insertion de noeuds si ces derniers n'existent pas
         MarkovNode pere = getDocs(oldDocsCp);
         MarkovNode child = getDocs(newDocs);
-
 
         //Renforcement de la chaine
         pere.renforcerChaine(child);
