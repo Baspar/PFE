@@ -22,7 +22,7 @@ public class KthMarkov{
     }
 
     //Methodes
-    public void add(KthMarkov markov){//TODO
+    public void add(KthMarkov markov){//DONE
         Enumeration<MarkovNode> markovNodes = markov.getNodes();
         while(markovNodes.hasMoreElements()){
             MarkovNode mn = markovNodes.nextElement();

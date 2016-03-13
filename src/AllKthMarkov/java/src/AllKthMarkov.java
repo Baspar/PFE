@@ -28,7 +28,7 @@ public class AllKthMarkov{
         for(int i=0; i<K; i++)
             markovs.get(i).add(all.getMarkov(i));
     }
-    public void ajouterSession(Vector<Document> session){//WIP
+    public void ajouterSession(Vector<Document> session){//DONE
         for(int i=1; i<=K; i++)
             if(session.size()>i){
                 //Initialisation des old/next documents

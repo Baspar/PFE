@@ -47,7 +47,7 @@ public class KMeans{
             System.out.println("  "+user.getName()+" ["+appartenanceGroup.get(user).distance(user)+"]");
         }
     }
-    public void compute(){//WIP
+    public void compute(){//DONE
         boolean changes=true;
         while(changes){
             changes=false;
@@ -82,5 +82,8 @@ public class KMeans{
                 group.updateMarkovs();
             }
         }
+    }
+    public Vector<Vector<Pair<Document, Float>>> guessNextDocs(User user,Vector<Document> session){//DONE
+        return appartenanceGroup.get(user).getMarkovs().guessNextDocs(session);
     }
 }

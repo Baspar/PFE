@@ -61,7 +61,7 @@ public class Group{
     public void removeUser(User user){//DONE
         users.remove(user);
     }
-    public void afficher(){//WIP
+    public void afficher(){//DONE
         System.out.println("  Centre: "+center);
         System.out.println("  Composition:");
         for(User user : users)
