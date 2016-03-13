@@ -5,13 +5,30 @@ public class User{
     private int tailleSessionsMax; // -1 => pas de limite max
     private Vector<Double> userVector;
     private Documents documents;
+    private AllKthMarkov markovs;
+    private String name;
 
-    public User(int max, Documents documents){//DONE
+    //Constructeur
+    public User(int max, Documents documents, String name){//DONE
+        this.name = name;
         this.documents = documents;
         tailleSessionsMax = max;
         sessions = new Vector<Vector<Document>>();
         userVector = new Vector<Double>();
     }
+
+    //Getter
+    public String getName(){//DONE
+        return this.name;
+    }
+    public AllKthMarkov getMarkovs(){//DONE
+        return this.markovs;
+    }
+    public Vector<Double> getUserVector(){//DONE
+        return userVector;
+    }
+
+    //Methodes
     public void ajouterSession(Vector<Document> session){//DONE
         if(tailleSessionsMax != -1)
             if(sessions.size()<tailleSessionsMax)
@@ -44,7 +61,7 @@ public class User{
 
             //Normalisation vector session
             for(int i=0; i<nbCat; i++)
-                sessionsVector.get(id).set(i, sessionsVector.get(id).get(i)/sessions.size());
+                sessionsVector.get(id).set(i, sessionsVector.get(id).get(i)/session.size());
         }
 
         for(int i=0; i<nbCat; i++){
@@ -53,8 +70,5 @@ public class User{
 
             userVector.set(i, userVector.get(i)/sessionsVector.size());
         }
-    }
-    public Vector<Double> getUserVector(){//DONE
-        return userVector;
     }
 }

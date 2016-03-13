@@ -4,24 +4,38 @@ public class AllKthMarkov{
     private int K;
     private Vector<KthMarkov> markovs;
 
-    public AllKthMarkov(String fileName){//TODO
+    //Constructeur
+    public AllKthMarkov(int K){//DONE
+        this.K = K;
+        markovs = new Vector<KthMarkov>();
+    }
+
+    //Getter
+    public int getK(){//DONE
+        return K;
     }
     public KthMarkov getMarkov(int i){//DONE
         return markovs.get(i);
     }
+
+    //Methodes
     private void ajouterDocs(int K, Vector<Document> oldDocs, Document nextDoc){//DONE
         markovs.get(K-1).renforcerChaine(oldDocs, nextDoc);
+    }
+    public void add(AllKthMarkov all){//DONE
+        for(int i=0; i<K; i++)
+            markovs.get(i).add(all.getMarkov(i));
     }
     public void ajouterSession(Vector<Document> session){//DONE
         Vector<Vector<Document>> oldDocs = new Vector<Vector<Document>>(K);
         Vector<Document> nextDocs = new Vector<Document>();
 
         for(int i=0; i<K; i++)
-            nextDocs.add(new Document(-1, -1));
+            nextDocs.add(new Document("", -1));
 
         for(Document doc: session){
             for(int k=1; k<K+1; k++){
-                if(nextDocs.get(k-1).getId() != -1)
+                if(nextDocs.get(k-1).getChemin() != "")
                     oldDocs.get(k-1).add(nextDocs.get(k-1));
 
                 nextDocs.set(k-1, doc);

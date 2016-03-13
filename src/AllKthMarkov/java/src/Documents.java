@@ -2,27 +2,33 @@ import java.util.Vector;
 import java.util.Hashtable;
 
 public class Documents{
-    private Vector<Document> documentsById;
-    private Hashtable<Integer, Vector<Document>> documentsbyCategory;
+    private Hashtable<String,Document> documentsByChemin;
+    private Hashtable<Integer,Vector<Document>> documentsByCategory;
 
+    //Constructeur
     public Documents(){//DONE
-        documentsById = new Vector<Document>();
-        documentsbyCategory = new Hashtable<Integer, Vector<Document>>();
+        documentsByChemin = new Hashtable<String, Document>();
+        documentsByCategory = new Hashtable<Integer, Vector<Document>>();
     }
-    public int createNewDoc(int categorie){//DONE
-        Document doc = new Document(documentsById.size(), categorie);
-        documentsById.add(doc);
 
-        if(!documentsbyCategory.contains(categorie))
-            documentsbyCategory.put(categorie, new Vector<Document>());
-        documentsbyCategory.get(categorie).add(doc);
-
-        return doc.getId();
-    }
-    public Vector<Document> getDocumentsById(){//DONE
-        return documentsById;
+    //Getter
+    public Hashtable<String,Document> getDocumentsByChemin(){//DONE
+        return documentsByChemin;
     }
     public int getNbCategories(){//DONE
-        return documentsbyCategory.keySet().size();
+        return documentsByCategory.keySet().size();
+    }
+    public Document getDocument(String chemin){//DONE
+        return documentsByChemin.get(chemin);
+    }
+
+    //Methodes
+    public void createNewDoc(String chemin, int categorie){//DONE
+        Document doc = new Document(chemin, categorie);
+        documentsByChemin.put(chemin, doc);
+
+        if(!documentsByCategory.contains(categorie))
+            documentsByCategory.put(categorie, new Vector<Document>());
+        documentsByCategory.get(categorie).add(doc);
     }
 }

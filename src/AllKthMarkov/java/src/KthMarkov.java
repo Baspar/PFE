@@ -17,7 +17,10 @@ public class KthMarkov{
         return nodes.get(docs);
     }
 
+
     //Methodes
+    public void add(KthMarkov markov){//TODO
+    }
     public void addNewNode(Vector<Document> node, int poidsNode){//DONE
         if(!nodes.contains(node)){
             nodes.put(node, new MarkovNode(node));
@@ -58,7 +61,7 @@ public class KthMarkov{
         //Affichage Noeuds
         for(Map.Entry<Vector<Document>, MarkovNode> node:nodes.entrySet()){
             for(Document doc:node.getKey())
-                out += doc.getId()+" ";
+                out += doc.getChemin()+" ";
             out += "["+node.getValue().getTotal()+"]\n";
         }
 
@@ -66,10 +69,10 @@ public class KthMarkov{
         for(Map.Entry<Vector<Document>, MarkovNode> node : nodes.entrySet()){
             for(Map.Entry<MarkovNode, Integer> child : node.getValue().getChild().entrySet()){
                 for(Document doc : node.getKey())
-                    out += doc.getId()+" ";
+                    out += doc.getChemin()+" ";
                 out += "-("+child.getValue()+")-";
                 for(Document doc : child.getKey().getMaChaineDoc())
-                    out += doc.getId()+" ";
+                    out += doc.getChemin()+" ";
                 out += "\n";
             }
         }
@@ -83,12 +86,12 @@ public String toUML(){//DONE
                 out += "  <";
 
                 for(Document doc:node.getKey())
-                    out += doc.getId()+",";
+                    out += doc.getChemin()+",";
 
                 out += "> -> <";
 
                 for(Document doc: child.getKey().getMaChaineDoc())
-                    out += doc.getId()+",";
+                    out += doc.getChemin()+",";
 
                 out += "> [label=\"";
                 out += ((float)child.getValue()/(float)node.getValue().getTotal());

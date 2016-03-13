@@ -1,19 +1,19 @@
 public class Document{
     //Parametre
-    private int id;
+    private String chemin;
     private int categorie;
 
     //Constructeur
-    public Document(int id, int categorie){//DONE
-        this.id=id;
+    public Document(String chemin, int categorie){//DONE
+        this.chemin = chemin;
         this.categorie=categorie;
     }
 
-    //Getters
+    //Methodes
     public int getCategorie(){//DONE
         return this.categorie;
     }
-    public int getId(){//DONE
-        return this.id;
+    public String getChemin(){//DONE
+        return this.chemin;
     }
 }

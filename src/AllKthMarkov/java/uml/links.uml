@@ -1,7 +1,4 @@
-X *-- User
-X *-- Group
 Group o-- User
-X *-- Documents
 Documents *-- Document
 User *-- AllKthMarkov
 AllKthMarkov *-- KthMarkov
