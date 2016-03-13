@@ -32,6 +32,9 @@ public class KMeans{
 
 
     //Methodes
+    public Group whereIs(User user){//DONE
+        return appartenanceGroup.get(user);
+    }
     public void afficher(){//DONE
         for(int i=0; i<K; i++){
             System.out.println("Group #"+i);
@@ -74,8 +77,10 @@ public class KMeans{
                 }
             }
 
-            for(Group group : groups)
+            for(Group group : groups){
                 group.updateCenter();
+                group.updateMarkovs();
+            }
         }
     }
 }

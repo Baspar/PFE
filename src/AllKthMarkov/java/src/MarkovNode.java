@@ -31,6 +31,17 @@ public class MarkovNode{
         else
             child.put(nextChaine, old+1);
     }
+    public void renforcerChaine(MarkovNode nextChaine, int i){//DONE
+        //Augmentation nombre de passage
+        total+=i;
+
+        //Récupération et augmentation passage nextChaine
+        Integer old=child.get(nextChaine);
+        if(old==null)
+            child.put(nextChaine, i);
+        else
+            child.put(nextChaine, old+i);
+    }
     public Vector<Pair<Document,Float>> guessNextDocs(){//DONE
         Vector<Pair<Document,Float>> out=new Vector<Pair<Document,Float>>();
 

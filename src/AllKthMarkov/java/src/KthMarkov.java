@@ -1,3 +1,4 @@
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Map;
@@ -13,36 +14,43 @@ public class KthMarkov{
     //Getter
     public MarkovNode getDocs(Vector<Document> docs){//DONE
         if(!nodes.contains(docs))
-            return null;
+            nodes.put(docs, new MarkovNode(docs));
         return nodes.get(docs);
     }
-
+    public Enumeration<MarkovNode> getNodes(){//DONE
+        return nodes.elements();
+    }
 
     //Methodes
     public void add(KthMarkov markov){//TODO
-    }
-    public void addNewNode(Vector<Document> node, int poidsNode){//DONE
-        if(!nodes.contains(node)){
-            nodes.put(node, new MarkovNode(node));
-            nodes.get(node).setTotal(poidsNode);
+        Enumeration<MarkovNode> markovNodes = markov.getNodes();
+        while(markovNodes.hasMoreElements()){
+            MarkovNode mn = markovNodes.nextElement();
+            MarkovNode pere = getDocs(mn.getMaChaineDoc());
+            for(Map.Entry<MarkovNode, Integer> ent : pere.getChild().entrySet()){
+                MarkovNode child = getDocs(ent.getKey().getMaChaineDoc());
+                pere.renforcerChaine(child, ent.getValue());
+            }
         }
     }
     public void renforcerChaine(Vector<Document> oldDocs, Document nextDoc){//DONE
         //Creation du vecteur nouveau document
         Vector<Document> newDocs= new Vector<Document>();
-        for(Document doc:oldDocs)
+        Vector<Document> oldDocsCp= new Vector<Document>();
+        for(Document doc:oldDocs){
             newDocs.add(doc);
+            oldDocsCp.add(doc);
+        }
         newDocs.remove(0);
         newDocs.add(nextDoc);
 
         //Insertion de noeuds si ces derniers n'existent pas
-        if(!nodes.contains(oldDocs))
-            nodes.put(oldDocs, new MarkovNode(oldDocs));
-        if(!nodes.contains(newDocs))
-            nodes.put(newDocs, new MarkovNode(newDocs));
+        MarkovNode pere = getDocs(oldDocsCp);
+        MarkovNode child = getDocs(newDocs);
+
 
         //Renforcement de la chaine
-        nodes.get(oldDocs).renforcerChaine(nodes.get(newDocs));
+        pere.renforcerChaine(child);
     }
     public String toSave(){//DONE
         String out="";
@@ -61,7 +69,7 @@ public class KthMarkov{
         //Affichage Noeuds
         for(Map.Entry<Vector<Document>, MarkovNode> node:nodes.entrySet()){
             for(Document doc:node.getKey())
-                out += doc.getChemin()+" ";
+                out += "\""+doc.getChemin()+"\" ";
             out += "["+node.getValue().getTotal()+"]\n";
         }
 
@@ -69,10 +77,10 @@ public class KthMarkov{
         for(Map.Entry<Vector<Document>, MarkovNode> node : nodes.entrySet()){
             for(Map.Entry<MarkovNode, Integer> child : node.getValue().getChild().entrySet()){
                 for(Document doc : node.getKey())
-                    out += doc.getChemin()+" ";
-                out += "-("+child.getValue()+")-";
+                    out += "\""+doc.getChemin()+"\" ";
+                out += "-("+child.getValue()+")- ";
                 for(Document doc : child.getKey().getMaChaineDoc())
-                    out += doc.getChemin()+" ";
+                    out += "\""+doc.getChemin()+"\" ";
                 out += "\n";
             }
         }

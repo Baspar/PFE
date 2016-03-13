@@ -30,7 +30,7 @@ public class Group{
     }
 
     //Methode
-    public double distance(User user){//CHK
+    public double distance(User user){//DONE
         double out=0;
         for(int i=0; i<nbCategories; i++)
             out += Math.pow( (user.getUserVector().get(i) - center.get(i)), 2);
@@ -61,7 +61,7 @@ public class Group{
     public void removeUser(User user){//DONE
         users.remove(user);
     }
-    public void afficher(){//DONE
+    public void afficher(){//WIP
         System.out.println("  Centre: "+center);
         System.out.println("  Composition:");
         for(User user : users)

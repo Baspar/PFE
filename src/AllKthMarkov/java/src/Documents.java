@@ -27,7 +27,7 @@ public class Documents{
         Document doc = new Document(chemin, categorie);
         documentsByChemin.put(chemin, doc);
 
-        if(!documentsByCategory.contains(categorie))
+        if(!documentsByCategory.containsKey(categorie))
             documentsByCategory.put(categorie, new Vector<Document>());
         documentsByCategory.get(categorie).add(doc);
     }

@@ -8,6 +8,8 @@ public class AllKthMarkov{
     public AllKthMarkov(int K){//DONE
         this.K = K;
         markovs = new Vector<KthMarkov>();
+        for(int i=0; i<K; i++)
+            markovs.add(new KthMarkov());
     }
 
     //Getter
@@ -26,27 +28,25 @@ public class AllKthMarkov{
         for(int i=0; i<K; i++)
             markovs.get(i).add(all.getMarkov(i));
     }
-    public void ajouterSession(Vector<Document> session){//DONE
-        Vector<Vector<Document>> oldDocs = new Vector<Vector<Document>>(K);
-        Vector<Document> nextDocs = new Vector<Document>();
+    public void ajouterSession(Vector<Document> session){//WIP
+        for(int i=1; i<=K; i++)
+            if(session.size()>i){
+                //Initialisation des old/next documents
+                Vector<Document> oldDocs = new Vector<Document>();
+                for(int j=0; j<i; j++)
+                    oldDocs.add(session.get(j));
+                Document nextDoc = session.get(i);
 
-        for(int i=0; i<K; i++)
-            nextDocs.add(new Document("", -1));
+                ajouterDocs(i, oldDocs, nextDoc);
 
-        for(Document doc: session){
-            for(int k=1; k<K+1; k++){
-                if(nextDocs.get(k-1).getChemin() != "")
-                    oldDocs.get(k-1).add(nextDocs.get(k-1));
+                for(int j=i+1; j<session.size(); j++){
+                    oldDocs.remove(0);
+                    oldDocs.add(nextDoc);
+                    nextDoc = session.get(j);
 
-                nextDocs.set(k-1, doc);
-
-                if(oldDocs.get(k-1).size() > k)
-                    oldDocs.get(k-1).remove(0);//TODO
-
-                if(oldDocs.get(k-1).size() == k)
-                    ajouterDocs(k, oldDocs.get(k-1), nextDocs.get(k-1));
+                    ajouterDocs(i, oldDocs, nextDoc);
+                }
             }
-        }
     }
     public Vector<Vector<Pair<Document, Float>>> guessNextDocs(Vector<Document> session){//DONE
         Vector<Vector<Pair<Document, Float>>> out = new Vector<Vector<Pair<Document, Float>>>();
@@ -63,6 +63,14 @@ public class AllKthMarkov{
                 out.add(new Vector<Pair<Document, Float>>());
         }
 
+        return out;
+    }
+    public String toSave(){//WIP
+        String out="";
+        return out;
+    }
+    public String toUML(){//WIP
+        String out="";
         return out;
     }
 }

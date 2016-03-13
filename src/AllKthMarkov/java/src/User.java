@@ -15,6 +15,7 @@ public class User{
         tailleSessionsMax = max;
         sessions = new Vector<Vector<Document>>();
         userVector = new Vector<Double>();
+        markovs = new AllKthMarkov(4);
     }
 
     //Getter
@@ -31,10 +32,11 @@ public class User{
     //Methodes
     public void ajouterSession(Vector<Document> session){//DONE
         if(tailleSessionsMax != -1)
-            if(sessions.size()<tailleSessionsMax)
+            if(sessions.size() == tailleSessionsMax)
                 sessions.remove(0);
 
         sessions.add(session);
+        markovs.ajouterSession(session);
         recomputeUserVector();
     }
     private void recomputeUserVector(){//DONE

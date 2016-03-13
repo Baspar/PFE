@@ -16,4 +16,7 @@ public class Document{
     public String getChemin(){//DONE
         return this.chemin;
     }
+    public String toString(){//DONE
+        return "\""+chemin+"\"["+categorie+"]";
+    }
 }

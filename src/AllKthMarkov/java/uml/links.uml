@@ -1,3 +1,5 @@
+KMeans *-- Group
+KMeans o-- User
 Group o-- User
 Documents *-- Document
 User *-- AllKthMarkov
