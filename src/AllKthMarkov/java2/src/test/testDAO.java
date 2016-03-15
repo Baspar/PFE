@@ -31,6 +31,7 @@ public class testDAO {
             session.add("14 Vaches");
 
 
+            List<String> session1 = new ArrayList<String>();
             session1.add("Un chateau");
             session1.add("Livre idiot");
             session1.add("Ma passion");

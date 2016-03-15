@@ -141,14 +141,14 @@ public class DAO {
             e.printStackTrace();
         }
     }
-    public void lier(int K, List<String> oldDocs, List<String> newDocs){
-        String query = "MATCH (m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+    public void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
             query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
         query += "}), (m2:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
             query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-        query += "}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
+        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
         ResultSet out = execQuery(query);
         try {
             out.close();
@@ -158,13 +158,13 @@ public class DAO {
     }
     public int getCptLink(int K, String user, List<String> oldDocs, List<String> newDocs){
         try {
-            String query = "MATCH (:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+            String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
             for(int i=1; i<oldDocs.size(); i++)
                 query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
             query += "})-[rel:NEXT]->(:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
             for(int i=1; i<newDocs.size(); i++)
                 query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-            query += "}) return rel";"
+            query += "})<-[:HAS]-(:User {name:\""+user+"\"}) return rel.cpt";
             ResultSet out = execQuery(query);
             int i=-1;
             if(out.next())
@@ -172,7 +172,22 @@ public class DAO {
             out.close();
             return i;
         } catch (Exception e ) {
+            e.printStackTrace();
             return -1;
+        }
+    }
+    public void updateLien(int K, String user, List<String> oldDocs, List<String> newDocs, int cpt){
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+        for(int i=1; i<oldDocs.size(); i++)
+            query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
+        query += "})-[rel:NEXT]->(m2:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
+        for(int i=1; i<newDocs.size(); i++)
+            query += ", doc"+i+": \""+newDocs.get(i)+"\"";
+        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.cpt = "+(cpt+1);
+        ResultSet out = execQuery(query);
+        try {
+            out.close();
+        } catch (Exception e ) {
             e.printStackTrace();
         }
     }
@@ -201,8 +216,12 @@ public class DAO {
         if(!nodeExists(K, user, newDocs))
             addMarkovNode(K, user, newDocs);
 
-        if(getCptLink(K, user, ))
-        lier(K, oldDocs, newDocs);
+        int cptActuel = getCptLink(K, user, oldDocs, newDocs);
+        if(cptActuel < 1)
+            lier(K, user, oldDocs, newDocs);
+        else
+            updateLien(K, user, oldDocs, newDocs, cptActuel);
+
     }
     public void addSession(String user, List<String> session){
         for(int i=1; i<session.size(); i++){
