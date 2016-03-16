@@ -274,7 +274,7 @@ public class DAO {
     //Catégories
     public int getCategorieId(String cat){
         try{
-            String query = "match (n:Categorie)  where n.name=\""+cat+"\" RETURN n.cpt";
+            String query = "match (n:Categorie {name:\""+cat+"\"}) RETURN n.cpt";
             ResultSet set = execQuery(query);
             int i=-1;
             if(set.next())
@@ -307,7 +307,7 @@ public class DAO {
     }
     public void addCategorie(String categorie){
         int nbCategories = getNbCategories();
-        ResultSet out = execQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:\""+nbCategories+"\"})");
+        ResultSet out = execQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})");
         try{
             out.close();
         } catch (Exception e){}
