@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.List;
 import java.util.Properties;
@@ -113,10 +114,10 @@ public class DAO {
     //Markovs
     public boolean nodeExists(int K, String user, List<String> docs){
         try{
-            String query = "match (n:Markov"+K+")  where n.doc0=\""+docs.get(0)+"\"";
+            String query = "match (n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
             for(int i=1; i<docs.size(); i++)
-                query += " AND n.doc"+i+"=\""+docs.get(i)+"\"";
-            query += " return count(n)";
+                query += ", doc"+i+":\""+docs.get(i)+"\"";
+            query += "})  return count(n)";
 
             ResultSet set = execQuery(query);
             int i=-1;
@@ -142,6 +143,7 @@ public class DAO {
         }
     }
     public void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
+        System.out.println("["+user+"] On lie "+oldDocs+" => "+newDocs);
         String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
             query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
@@ -210,21 +212,26 @@ public class DAO {
             newDocs.add(oldDocs.get(i));
         newDocs.add(newDoc);
 
-        if(!nodeExists(K, user, oldDocs))
+        if(!nodeExists(K, user, oldDocs)){
+            System.out.println("  ["+user+"] "+oldDocs+" need to be created");
             addMarkovNode(K, user, oldDocs);
+        }
 
-        if(!nodeExists(K, user, newDocs))
+        if(!nodeExists(K, user, newDocs)){
+            System.out.println("  ["+user+"] "+newDocs+" need to be created");
             addMarkovNode(K, user, newDocs);
+        }
 
         int cptActuel = getCptLink(K, user, oldDocs, newDocs);
-        if(cptActuel < 1)
+        if(cptActuel < 1){
             lier(K, user, oldDocs, newDocs);
-        else
+        }else{
             updateLien(K, user, oldDocs, newDocs, cptActuel);
+        }
 
     }
     public void addSession(String user, List<String> session){
-        for(int i=1; i<session.size(); i++){
+        for(int i=1; i<Math.min(5, session.size()); i++){
             Vector<String> oldDocs = new Vector<String>();
             for(int j=0; j<i; j++)
                 oldDocs.add(session.get(j));
@@ -239,6 +246,40 @@ public class DAO {
                 renforcer(i, user, oldDocs, newDoc);
             }
         }
+    }
+    public Vector<Hashtable<String, Double>> guessNextDocs(String user, Vector<String> session){
+        Vector<Hashtable<String, Double>> out = new Vector<Hashtable<String, Double>>();
+        for(int i=1; i<5; i++){
+            out.add(new Hashtable<String, Double>());
+
+            //GEstion noeud autre groupe
+            String query = "MATCH (:User {name:\""+user+"\"})<-[:CONTAINS]-(:Group)-[:CONTAINS]->(:User)-[:HAS]->(:Markov"+i+" {doc0: \""+session.get(session.size()-i)+"\"";
+            for(int j=session.size()-i+1; j<session.size(); j++)
+                query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
+            query += "})-[rel:NEXT]->(d:Markov"+i+") ";
+            query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
+            query += "UNION ALL ";
+
+            // GEstion de nos noeud
+            query += "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+i+" {doc0: \""+session.get(session.size()-i)+"\"";
+            for(int j=session.size()-i+1; j<session.size(); j++)
+                query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
+            query += "})-[rel:NEXT]->(d:Markov"+i+") ";
+            query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
+            ResultSet rs = execQuery(query);
+            try{
+                int total=0;
+                while(rs.next()){
+                    String doc = rs.getString("doc");
+                    int cpt = rs.getInt("rel.cpt");
+                    total+=cpt;
+                    if(out.get(i-1).containsKey(doc)){
+                        //int old =
+                    }
+                }
+            } catch (Exception e){ System.out.println(e);}
+        }
+        return out;
     }
 
     //Catégories

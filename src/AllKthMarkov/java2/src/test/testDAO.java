@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,13 @@ public class testDAO {
             session.add("Un pied");
             session.add("14 Vaches");
 
+            Vector<String> session2 = new Vector<String>();
+            session2.add("Un chateau");
+            session2.add("Livre idiot");
+            session2.add("Ma passion");
+            session2.add("Un pied");
+            session2.add("14 Vaches");
+            session2.add("Ma passion");
 
             List<String> session1 = new ArrayList<String>();
             session1.add("Un chateau");
@@ -37,8 +45,14 @@ public class testDAO {
             session1.add("Ma passion");
             session1.add("Un pied");
             session1.add("14 Vaches");
+
             dao.addSession("User1", session);
+            System.out.println("OK");
+            dao.addSession("User2", session2);
+            System.out.println("OK");
             dao.addSession("User1", session1);
+            System.out.println("OK");
+            //dao.guessNextDocs("User6", session2);
         } catch (Exception e){}
     }
 }
