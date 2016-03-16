@@ -66,7 +66,6 @@ public class DAO {
 
     //Users
     private void addUser(String name){
-        System.out.println("    User "+name);
         ResultSet out = execQuery("create ("+name+":User {name: \""+name+"\" })");
         try{
             out.close();
@@ -114,36 +113,24 @@ public class DAO {
     //Markovs
     public boolean nodeExists(int K, String user, List<String> docs){
         try{
-            String query = "match (n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
+            String query = "match (u:User)-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
             for(int i=1; i<docs.size(); i++)
                 query += ", doc"+i+":\""+docs.get(i)+"\"";
-            query += "})  return count(n)";
+            query += "}) return count(n), u.name";
 
             ResultSet set = execQuery(query);
-            int i=-1;
-            if(set.next())
-                i=set.getInt("count(n)");
+            int i=0;
+            while(set.next())
+                if(set.getString("u.name").equals(user))
+                    i+=set.getInt("count(n)");
             set.close();
-            return (i==1);
+            return (i>=1);
         } catch (Exception e){
             System.out.print(e);
             return false;
         }
     }
-    public void link(int K, String user, List<String> docs){
-        String query = "MATCH (u:User {name:\""+user+"\"}), (m:Markov"+K+" {doc0: \""+docs.get(0)+"\"";
-        for(int i=1; i<docs.size(); i++)
-            query += ", doc"+i+": \""+docs.get(i)+"\"";
-        query += "}) CREATE (u)-[:HAS]->(m)";
-        ResultSet out = execQuery(query);
-        try {
-            out.close();
-        } catch (Exception e ) {
-            e.printStackTrace();
-        }
-    }
     public void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
-        System.out.println("["+user+"] On lie "+oldDocs+" => "+newDocs);
         String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
             query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
@@ -194,7 +181,7 @@ public class DAO {
         }
     }
     public void addMarkovNode(int K, String user, List<String> docs){
-        String query = "create (:Markov"+K+" {doc0: \""+docs.get(0)+"\"";
+        String query = "MATCH (u:User {name:\""+user+"\"}) CREATE (u)-[:HAS]->(:Markov"+K+" {doc0: \""+docs.get(0)+"\"";
         for(int i=1; i<docs.size(); i++)
             query += ", doc"+i+": \""+docs.get(i)+"\"";
         query += "})";
@@ -204,7 +191,6 @@ public class DAO {
         } catch (Exception e ) {
             e.printStackTrace();
         }
-        link(K, user, docs);
     }
     public void renforcer(int K, String user, List<String> oldDocs, String newDoc){
         List<String> newDocs = new ArrayList<String>();
@@ -212,15 +198,11 @@ public class DAO {
             newDocs.add(oldDocs.get(i));
         newDocs.add(newDoc);
 
-        if(!nodeExists(K, user, oldDocs)){
-            System.out.println("  ["+user+"] "+oldDocs+" need to be created");
+        if(!nodeExists(K, user, oldDocs))
             addMarkovNode(K, user, oldDocs);
-        }
 
-        if(!nodeExists(K, user, newDocs)){
-            System.out.println("  ["+user+"] "+newDocs+" need to be created");
+        if(!nodeExists(K, user, newDocs))
             addMarkovNode(K, user, newDocs);
-        }
 
         int cptActuel = getCptLink(K, user, oldDocs, newDocs);
         if(cptActuel < 1){
@@ -271,11 +253,18 @@ public class DAO {
                 int total=0;
                 while(rs.next()){
                     String doc = rs.getString("doc");
-                    int cpt = rs.getInt("rel.cpt");
+                    Double cpt = rs.getDouble("rel.cpt");
                     total+=cpt;
                     if(out.get(i-1).containsKey(doc)){
-                        //int old =
+                        double old = out.get(i-1).get(doc);
+                        out.get(i-1).put(doc, cpt+old);
+                    } else {
+                        out.get(i-1).put(doc, cpt);
                     }
+                }
+                for(String key : out.get(i-1).keySet()){
+                    double old = out.get(i-1).get(key);
+                    out.get(i-1).put(key, old/total);
                 }
             } catch (Exception e){ System.out.println(e);}
         }
