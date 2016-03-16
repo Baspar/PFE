@@ -51,6 +51,8 @@ public class DAO {
             System.out.println(e);
         }
     }
+
+    //K-means
     public void initialise(){
         List<String> users = getUserNames();
         int max = getNbGroup();
@@ -73,7 +75,7 @@ public class DAO {
             System.out.println(e);
         }
     }
-    private boolean userIsPresent(String name){
+    private boolean userExists(String name){
         try{
             ResultSet set = execQuery("match (n:User)  where n.name=\""+name+"\" return count(n)");
             int i=-1;
@@ -86,9 +88,12 @@ public class DAO {
             return false;
         }
     }
-    public void addUserIfNotPresent(String name){
-        if(!userIsPresent(name))
+    public int addUserIfNotPresent(String name){
+        if(!userExists(name)){
             addUser(name);
+            return 0;
+        }
+        return 1;
     }
     public Integer getNbUser(){
         return getNbClass("User");
@@ -113,16 +118,15 @@ public class DAO {
     //Markovs
     public boolean nodeExists(int K, String user, List<String> docs){
         try{
-            String query = "match (u:User)-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
+            String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
             for(int i=1; i<docs.size(); i++)
                 query += ", doc"+i+":\""+docs.get(i)+"\"";
-            query += "}) return count(n), u.name";
+            query += "}) return count(n)";
 
             ResultSet set = execQuery(query);
             int i=0;
             while(set.next())
-                if(set.getString("u.name").equals(user))
-                    i+=set.getInt("count(n)");
+                i+=set.getInt("count(n)");
             set.close();
             return (i>=1);
         } catch (Exception e){
@@ -145,7 +149,7 @@ public class DAO {
             e.printStackTrace();
         }
     }
-    public int getCptLink(int K, String user, List<String> oldDocs, List<String> newDocs){
+    public int getCptLien(int K, String user, List<String> oldDocs, List<String> newDocs){
         try {
             String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
             for(int i=1; i<oldDocs.size(); i++)
@@ -204,7 +208,7 @@ public class DAO {
         if(!nodeExists(K, user, newDocs))
             addMarkovNode(K, user, newDocs);
 
-        int cptActuel = getCptLink(K, user, oldDocs, newDocs);
+        int cptActuel = getCptLien(K, user, oldDocs, newDocs);
         if(cptActuel < 1){
             lier(K, user, oldDocs, newDocs);
         }else{
@@ -212,21 +216,30 @@ public class DAO {
         }
 
     }
-    public void addSession(String user, List<String> session){
-        for(int i=1; i<Math.min(5, session.size()); i++){
-            Vector<String> oldDocs = new Vector<String>();
-            for(int j=0; j<i; j++)
-                oldDocs.add(session.get(j));
-            String newDoc = session.get(i);
+    public int addSession(String user, List<String> session){
+        if(userExists(user)){
+            for(int i=0; i<session.size(); i++)
+                if(!docExists(session.get(i)))
+                    return (i+2);
 
-            renforcer(i, user, oldDocs, newDoc);
+            for(int i=1; i<Math.min(5, session.size()); i++){
+                Vector<String> oldDocs = new Vector<String>();
+                for(int j=0; j<i; j++)
+                    oldDocs.add(session.get(j));
+                String newDoc = session.get(i);
 
-            for(int j=i+1; j<session.size(); j++){
-                oldDocs.remove(0);
-                oldDocs.add(session.get(j-1));
-                newDoc = session.get(j);
                 renforcer(i, user, oldDocs, newDoc);
+
+                for(int j=i+1; j<session.size(); j++){
+                    oldDocs.remove(0);
+                    oldDocs.add(session.get(j-1));
+                    newDoc = session.get(j);
+                    renforcer(i, user, oldDocs, newDoc);
+                }
             }
+            return 0;
+        } else {
+            return 1;
         }
     }
     public Vector<Hashtable<String, Double>> guessNextDocs(String user, Vector<String> session){
@@ -271,6 +284,38 @@ public class DAO {
         return out;
     }
 
+    //Documents
+    public int addDocument(String doc, String categorie){
+        if(getCategorieId(categorie) != -1){
+            if(!docExists(doc)){
+                ResultSet out = execQuery("MATCH (c:Categorie {name:\""+categorie+"\"}) CREATE (c)<-[:HASCATEGORIE]-(:Doc {name: \""+doc+"\" })");
+                try{
+                    out.close();
+                } catch(Exception e){
+                    System.out.println(e);
+                } finally {
+                    return 0;
+                }
+            } else {
+                return 2;
+            }
+        }
+        return 1;
+    }
+    public boolean docExists(String doc){
+        try{
+            ResultSet set = execQuery("match (d:Doc {name:\""+doc+"\"}) return count(d)");
+            int i=0;
+            while(set.next())
+                i+=set.getInt("count(d)");
+            set.close();
+            return (i>=1);
+        } catch (Exception e){
+            System.out.print(e);
+            return false;
+        }
+    }
+
     //Catégories
     public int getCategorieId(String cat){
         try{
@@ -305,14 +350,20 @@ public class DAO {
             return new ArrayList<String>();
         }
     }
-    public void addCategorie(String categorie){
+    public int addCategorie(String categorie){
         int nbCategories = getNbCategories();
-        ResultSet out = execQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})");
-        try{
-            out.close();
-        } catch (Exception e){}
+        if(getCategorieId(categorie)==-1){
+            ResultSet out = execQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})");
+            try{
+                out.close();
+            } catch (Exception e){
+                System.out.println(e);
+            } finally {
+                return 0;
+            }
+        }
+        return 1;
     }
-
 
     //Autre
     private ResultSet execQuery(String query){
