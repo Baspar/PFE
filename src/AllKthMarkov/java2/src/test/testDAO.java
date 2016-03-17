@@ -7,11 +7,8 @@ import java.util.List;
 import dao.DAO;
 
 public class testDAO {
-    public static void main(String[] args){
-        DAO dao = new DAO();
-        if(!dao.isConnected())
-            return;
-
+    private static DAO dao;
+    private static void test(){
         int isOk;
 
         System.out.print("Nettoyage Base de données...");
@@ -52,6 +49,11 @@ public class testDAO {
         System.out.print("Ajout User9...");
         isOk = dao.addUserIfNotPresent("User9");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
+        for(int i=10; i<100; i++){
+            System.out.print("Ajout User"+i+"...");
+            isOk = dao.addUserIfNotPresent("User"+i);
+            System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
+        }
 
 
         System.out.println();
@@ -167,6 +169,129 @@ public class testDAO {
         System.out.println(dao.guessNextDocs("User6", sessionTest));
         System.out.println("DONE");
 
-        dao.calculVectorGroupe();
+        dao.calculVectorGroupes();
+
+        dao.recompute();
+    }
+    private static void testRandom(boolean justRequest){
+        int nbUsers = 10;
+        int nbCategories = 20;
+        int nbDocs = 50;
+        int nbSessions = 50;
+        int nbGroups = 4;
+        int tailleSessionMin = 3;
+        int tailleSessionMax = 7;
+        //int nbUsers = 50;
+        //int nbCategories = 20;
+        //int nbDocs = 100;
+        //int nbSessions = 200;
+        //int nbGroups = 10;
+        //int tailleSessionMin = 4;
+        //int tailleSessionMax = 8;
+
+        int isOk;
+
+        if(!justRequest){
+            //Clear
+            System.out.print("Nettoyage Base de données...");
+            dao.clearDB();
+            System.out.println(" DONE");
+
+
+            System.out.println();
+
+
+            //Users
+            for(int i=0; i<nbUsers; i++){
+                System.out.print(i+"/"+nbUsers+"> Ajout User"+i+"...");
+                isOk = dao.addUserIfNotPresent("User"+i);
+                System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
+            }
+
+
+            System.out.println();
+
+
+            //Categories
+            for(int i=0; i<nbCategories; i++){
+                System.out.print(i+"/"+nbCategories+"> Ajout catégorie Cat"+i+"...");
+                isOk = dao.addCategorie("Cat"+i);
+                System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà présente)");
+            }
+
+
+            System.out.println();
+
+
+            //Documents
+            for(int i=0; i<nbDocs; i++){
+                int categorie = (int)Math.floor(Math.random() * nbCategories);
+                System.out.print(i+"/"+nbDocs+"> Ajout document \"Doc"+i+"\" [Cat"+categorie+"]...");
+                isOk = dao.addDocument("Doc"+i, "Cat"+categorie);
+                System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
+            }
+
+
+            System.out.println();
+
+
+            //Sessions
+            for(int i=0; i<nbSessions; i++){
+                int user = (int) Math.floor(Math.random() * nbUsers);
+                int tailleSession = (int) Math.floor( tailleSessionMin + Math.random() * (tailleSessionMax - tailleSessionMin));
+
+                Vector<String> session = new Vector<String>();
+                for(int j=0; j<tailleSession; j++)
+                    session.add("Doc"+(int) Math.floor( Math.random() * nbDocs));
+
+                System.out.print(i+"/"+nbSessions+"> Ajout "+session+" à user"+user+"...");
+                isOk = dao.addSession("User"+user, session);
+                System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+            }
+
+
+            System.out.println();
+
+
+            System.out.print("Passage à "+nbGroups+" groupes...");
+            dao.changeNumberOfGroup(nbGroups);
+            System.out.println(" DONE");
+
+
+            System.out.println();
+        }
+        //Sessions
+        for(int i=0; i<2; i++){
+            int user = (int) Math.floor(Math.random() * nbUsers);
+            int tailleSession = (int) Math.floor( tailleSessionMin + Math.random() * (tailleSessionMax - tailleSessionMin));
+
+            Vector<String> session = new Vector<String>();
+            for(int j=0; j<tailleSession; j++)
+                session.add("Doc"+(int) Math.floor( Math.random() * nbDocs));
+
+            System.out.print(i+"/"+nbSessions+"> Ajout "+session+" à user"+user+"...");
+            isOk = dao.addSession("User"+user, session);
+            System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        }
+
+        System.out.println("Avant:");
+        System.out.println(dao.getUsersGroups());
+
+        dao.recompute();
+
+        System.out.println("Après:");
+        System.out.println(dao.getUsersGroups());
+
+
+    }
+    public static void main(String[] args){
+        dao = new DAO();
+        if(!dao.isConnected())
+            return;
+
+        //test();
+        //testRandom(false);
+        testRandom(true);
+
     }
 }
