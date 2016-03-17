@@ -1,13 +1,135 @@
 package test;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import dao.DAO;
 
 public class testDAO {
     private static DAO dao;
+    private static void console(){
+        String instruction="";
+        String userConnected="";
+        Scanner in = new Scanner(System.in);
+        System.out.println();
+        System.out.println("Bienvenue, tapez HELP pour afficher l'aide.");
+        while(!instruction.equals("EXIT") && !instruction.equals("Q")){
+            System.out.println();
+
+            System.out.print((userConnected.equals("")?"#####":userConnected)+"> ");
+            String[] line = in.nextLine().split("\\s+");
+
+            System.out.println();
+
+            if(line.length > 0){
+                instruction = line[0].toUpperCase();
+                if(instruction.equals("EXIT") || instruction.equals("Q")){
+                    System.out.println("   Fermeture du programme");
+                } else if (instruction.equals("ADD")){
+                    if(line.length > 1){
+                        String type = line[1].toUpperCase();
+                        if(type.equals("CAT")){
+                            String cat;
+                            System.out.print("   Choisissez la catégorie du document: ");
+                            cat = in.nextLine();
+                            if(dao.addCategorie(cat)==0){
+                                System.out.println("   Succès de l'ajout de la catégorie");
+                            } else {
+                                System.out.println("   Une catégorie portant ce nom existe déjà)");
+                            }
+                        }else if(type.equals("DOC")){
+                            String doc, cat;
+                            System.out.print("   Choisissez le nom du document: ");
+                            doc = in.nextLine();
+                            System.out.print("   Choisissez la catégorie du document: ");
+                            cat = in.nextLine();
+                            switch(dao.addDocument(doc, cat)){
+                                case 1: System.out.println("   Catégorie inexistante");
+                                    break;
+                                case 2: System.out.println("   Un document portant ce nom existe déjà");
+                                    break;
+                                default: System.out.println("   Succès de l'ajout du document");
+                                    break;
+                            }
+                        }else if(type.equals("USER")){
+                            String user;
+                            System.out.print("   Choisissez le nom d'utilisateur: ");
+                            user = in.nextLine();
+                            if(dao.addUserIfNotPresent(user)==0){
+                                System.out.println("   Succès de l'ajout d'utilisateur");
+                            }else{
+                                System.out.println("   Un utilisateur portant ce nom existe déjà)");
+                            }
+                        }else{
+                            System.out.println("   Type d'ajout inexistant");
+                        }
+                    } else {
+                        System.out.println("   Type d'ajout manquant");
+                    }
+                } else if (instruction.equals("HELP")){
+                    System.out.println("   Liste des commandes:");
+                    System.out.println("     HELP => Afficher l'aide");
+                    System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
+                    System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
+                    System.out.println("     CONNECT <user> => Connexion");
+                    System.out.println("     DISCONNECT <user> => Déconnexion");
+                    System.out.println("     CLEAR => Effacer la base de donnée");
+                    System.out.println("     EXIT => Quitter");
+                } else if (instruction.equals("CONNECT")){//OK
+                    if(line.length > 1){
+                        String user = line[1];
+                        if(dao.userExists(user)){
+                            userConnected=user;
+                            System.out.println("   Connexion OK");
+                        }else{
+                            System.out.println("   Nom d'utilisateur incorrect");
+                        }
+                    } else {
+                        System.out.println("   Nom d'utilisateur manquant");
+                    }
+                } else if (instruction.equals("LIST")){//OK
+                    if(line.length > 1){
+                        String type = line[1].toUpperCase();
+                        if(type.equals("DOC")){
+                            System.out.println("   Liste documents | Catégorie");
+                            for(Map.Entry<String, String> ent : dao.getDocsCategories().entrySet())
+                                System.out.println("     "+ent.getKey()+"   | "+ent.getValue());
+                        } else if (type.equals("CAT")){
+                            System.out.println("   Liste catégories");
+                            for(String cat : dao.getCategories())
+                                System.out.println("     "+cat);
+                        } else if (type.equals("USER")){
+                            System.out.println("   Liste utilisateur | Groupe");
+                            for(Map.Entry<String, String> ent : dao.getUsersGroups().entrySet())
+                                System.out.println("     "+ent.getKey()+"   | "+ent.getValue());
+                        }
+                    } else {
+                        System.out.println("   Type manquant (DOC, CAT, USER)");
+                    }
+                } else if (instruction.equals("CLEAR")){//OK
+                    if(userConnected.equals("")){
+                        dao.clearDB();
+                        System.out.println("   Effacement OK");
+                    }else{
+                        System.out.println("   Veuillez vous déconnecter");
+                    }
+                } else if (instruction.equals("DISCONNECT")){//OK
+                    if(!userConnected.equals("")){
+                        userConnected="";
+                        System.out.println("   Déconnexion réussie");
+                    }else{
+                        System.out.println("   Vous n'êtes pas connecté");
+                    }
+                } else {
+                    System.out.println("   Commande non reconnue");
+                }
+            }
+        }
+    }
     private static void test(){
         int isOk;
 
@@ -212,7 +334,7 @@ public class testDAO {
             System.out.println();
 
 
-            //Categories
+            //Catégories
             for(int i=0; i<nbCategories; i++){
                 System.out.print(i+"/"+nbCategories+"> Ajout catégorie Cat"+i+"...");
                 isOk = dao.addCategorie("Cat"+i);
@@ -261,7 +383,7 @@ public class testDAO {
             System.out.println();
         }
         //Sessions
-        for(int i=0; i<2; i++){
+        for(int i=0; i<20; i++){
             int user = (int) Math.floor(Math.random() * nbUsers);
             int tailleSession = (int) Math.floor( tailleSessionMin + Math.random() * (tailleSessionMax - tailleSessionMin));
 
@@ -291,7 +413,8 @@ public class testDAO {
 
         //test();
         //testRandom(false);
-        testRandom(true);
+        //testRandom(true);
+        console();
 
     }
 }

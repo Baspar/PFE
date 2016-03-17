@@ -192,6 +192,7 @@ public class DAO {
                 String group = set.getString("group");
                 out.put(user, group);
             }
+            System.out.println(out);
             return out;
         } catch(Exception e){
             System.out.println(e);
@@ -223,7 +224,7 @@ public class DAO {
             System.out.println(e);
         }
     }
-    private boolean userExists(String name){
+    public boolean userExists(String name){
         try(ResultSet set = connect.createStatement().executeQuery("match (n:User)  where n.name=\""+name+"\" return count(n)")){
             int i=-1;
             if(set .next())
@@ -609,6 +610,21 @@ public class DAO {
             return false;
         }
     }
+    public HashMap<String, String> getDocsCategories(){
+        HashMap<String, String> out = new HashMap<String, String>();
+        String query = "MATCH (d:Doc)--(c:Categorie) RETURN d.name AS doc, c.name AS cat";
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+            while(set.next()){
+                String cat = set.getString("cat");
+                String doc = set.getString("doc");
+                out.put(doc, cat);
+            }
+            return out;
+        } catch(Exception e){
+            System.out.println(e);
+            return new HashMap<String, String>();
+        }
+    }
     public int getCategorie(String doc){
         String query = "MATCH (c:Categorie)-[]-(:Doc {name: \""+doc+"\"}) RETURN c.cpt";
         int out = -1;
@@ -639,12 +655,11 @@ public class DAO {
         return getNbClass("Categorie");
     }
     public List<String> getCategories(){
-        try(ResultSet set = connect.createStatement().executeQuery("match (n:Category) return n.name")){
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:Categorie) return n.name")){
             List<String> out = new ArrayList<String>();
 
-            while(set.next()){
+            while(set.next())
                 out.add(set.getString("n.name"));
-            }
 
             return out;
         } catch(Exception e){
@@ -682,6 +697,8 @@ public class DAO {
         try(ResultSet out = connect.createStatement().executeQuery("match (n) detach delete n")){
         } catch(Exception e){
             System.out.println(e);
+        }finally{
+            changeNumberOfGroup(5);
         }
     }
     public boolean isConnected(){
