@@ -125,11 +125,6 @@ public class testDAO {
         session1.add("Un pied");
         session1.add("Ma passion");
 
-        Vector<String> sessionTest = new Vector<String>();
-        sessionTest.add("Un chateau");
-        sessionTest.add("Livre idiot");
-        sessionTest.add("Ma passion");
-        sessionTest.add("Un pied");
 
         List<String> sessionBug = new ArrayList<String>();
         sessionBug.add("Un chateau");
@@ -161,6 +156,12 @@ public class testDAO {
 
         System.out.println();
 
+
+        Vector<String> sessionTest = new Vector<String>();
+        sessionTest.add("Un chateau");
+        sessionTest.add("Livre idiot");
+        sessionTest.add("Ma passion");
+        sessionTest.add("Un pied");
 
         System.out.println("Debut requete...");
         System.out.println(dao.guessNextDocs("User6", sessionTest));
