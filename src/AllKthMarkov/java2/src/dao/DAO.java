@@ -22,7 +22,7 @@ public class DAO {
     private String password = "neo4j";
 
     //Paramètres modèle
-    private int dureeDeVie = 100;
+    private int dureeDeVie = 1;
 
     //Constructeur
     public DAO(){
@@ -157,7 +157,7 @@ public class DAO {
     }
 
     //Markovs
-    public boolean nodeExists(int K, String user, List<String> docs){
+    private boolean nodeExists(int K, String user, List<String> docs){
         String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {docs:[\""+docs.get(0)+"\"";
         for(int i=1; i<docs.size(); i++)
             query += ", \""+docs.get(i)+"\"";
@@ -173,49 +173,47 @@ public class DAO {
             return false;
         }
     }
-    public void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
+    private void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
         String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
             query += ", \""+oldDocs.get(i)+"\"";
         query += "]}), (m2:Markov"+K+" {docs: [\""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
             query += ", \""+newDocs.get(i)+"\"";
-        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {fin:"+(getNbSessions(user)+dureeDeVie)+"}]->(m2)";
-        //MODIFICATION
-        //query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
+        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {fins:["+(getNbSessions(user)+dureeDeVie)+"]}]->(m2)";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
             System.out.println(e);
         }
     }
-    public int getCptLien(int K, String user, List<String> oldDocs, List<String> newDocs){
-        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+    private int getCptLien(int K, String user, List<String> oldDocs, List<String> newDocs){
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
-            query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
-        query += "})-[rel:NEXT]->(:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
+            query += ", \""+oldDocs.get(i)+"\"";
+        query += "]})-[rel:NEXT]->(:Markov"+K+" {docs: [\""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
-            query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) return rel.cpt";
+            query += ", \""+newDocs.get(i)+"\"";
+        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) return size(rel.fins) AS cpt";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
             int i=-1;
             if(set.next())
-                i=set.getInt("rel.cpt");
+                i=set.getInt("cpt");
             return i;
         } catch(Exception e){
             System.out.println(e);
             return -1;
         }
     }
-    public void updateLien(int K, String user, List<String> oldDocs, List<String> newDocs, int cpt){
-        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
+    public void updateLien(int K, String user, List<String> oldDocs, List<String> newDocs){
+        String query = "MATCH (u:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
             query += ", \""+oldDocs.get(i)+"\"";
-        query += "]})-[rel:NEXT]->(m2:Markov"+K+" {docs: i[\""+newDocs.get(0)+"\"";
+        query += "]})-[rel:NEXT]->(m2:Markov"+K+" {docs: [\""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
             query += ", \""+newDocs.get(i)+"\"";
-        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.cpt = "+(cpt+1);
+        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.fins = rel.fins + (u.nbSessions + "+dureeDeVie+")";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
@@ -232,7 +230,7 @@ public class DAO {
             System.out.println(e);
         }
     }
-    public void renforcer(int K, String user, List<String> oldDocs, String newDoc){
+    private void renforcer(int K, String user, List<String> oldDocs, String newDoc){
         List<String> newDocs = new ArrayList<String>();
         for(int i=1; i<oldDocs.size(); i++)
             newDocs.add(oldDocs.get(i));
@@ -244,13 +242,12 @@ public class DAO {
         if(!nodeExists(K, user, newDocs))
             addMarkovNode(K, user, newDocs);
 
-        //MODIFICATION
-        //int cptActuel = getCptLien(K, user, oldDocs, newDocs);
-        //if(cptActuel < 1){
+        int cptActuel = getCptLien(K, user, oldDocs, newDocs);
+        if(cptActuel < 1){
             lier(K, user, oldDocs, newDocs);
-        //}else{
-            //updateLien(K, user, oldDocs, newDocs, cptActuel);
-        //}
+        }else{
+            updateLien(K, user, oldDocs, newDocs);
+        }
 
     }
     public int addSession(String user, List<String> session){
@@ -260,6 +257,7 @@ public class DAO {
                     return (i+2);
 
             removeLiensPerimes(user);
+            removeLiensVides(user);
             removeFeuillesMarkov(user);
 
             for(int i=1; i<Math.min(5, session.size()); i++){
@@ -347,9 +345,18 @@ public class DAO {
             }
         }
     }
+    private void removeLiensVides(String user){
+        if(dureeDeVie > 0){
+            String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->()-[rel:NEXT]->() WHERE SIZE(rel.fins) = 0 DELETE rel";
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
+        }
+    }
     private void removeLiensPerimes(String user){
         if(dureeDeVie > 0){
-            String query = "MATCH (u:User {name:\""+user+"\"})-[:HAS]->()-[rel:NEXT]->() WHERE rel.fin = u.nbSessions DELETE rel";
+            String query = "MATCH (u:User {name:\""+user+"\"})-[:HAS]->()-[rel:NEXT]->() WHERE HEAD(rel.fins) = u.nbSessions SET rel.fins = TAIL(rel.fins)";
             try(ResultSet set = connect.createStatement().executeQuery(query)){
             } catch(Exception e){
                 System.out.println(e);
