@@ -14,7 +14,14 @@ public class testDAO {
 
         int isOk;
 
+        System.out.print("Nettoyage Base de données...");
         dao.clearDB();
+        System.out.println(" DONE");
+
+
+        System.out.println();
+
+
         System.out.print("Ajout User1...");
         isOk = dao.addUserIfNotPresent("User1");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
@@ -148,7 +155,7 @@ public class testDAO {
 
 
         System.out.println("Debut requete...");
-        System.out.println(dao.guessNextDocs("User1", session2));
+        System.out.println(dao.guessNextDocs("User6", session2));
         System.out.println("DONE");
     }
 }

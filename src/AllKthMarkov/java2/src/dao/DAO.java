@@ -22,7 +22,7 @@ public class DAO {
     private String password = "neo4j";
 
     //Paramètres modèle
-    private int dureeDeVie = 1;
+    private int dureeDeVie = 100;
 
     //Constructeur
     public DAO(){
@@ -139,9 +139,12 @@ public class DAO {
             return new ArrayList<String>();
         }
     }
-    public void resizeUserVectors(){//TODO
-        int nbCategories = getNbCategories();
-        for(String user : getUserNames()){
+    public void resizeUserVectors(){
+        String query = "MATCH (u:User) SET u.userVector = u.userVector  + 0";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
         }
     }
     private void incrementNbSessionsUser(String user){
@@ -416,6 +419,7 @@ public class DAO {
         int nbCategories = getNbCategories();
         if(getCategorieId(categorie)==-1){
             try(ResultSet set = connect.createStatement().executeQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})")){
+                resizeUserVectors();
                 return 0;
             } catch(Exception e){
                 System.out.println(e);
