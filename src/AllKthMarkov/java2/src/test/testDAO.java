@@ -9,6 +9,9 @@ import dao.DAO;
 public class testDAO {
     public static void main(String[] args){
         DAO dao = new DAO();
+        if(!dao.isConnected())
+            return;
+
         int isOk;
 
         dao.clearDB();

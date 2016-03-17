@@ -15,10 +15,11 @@ import org.neo4j.jdbc.Neo4jConnection;
 public class DAO {
     private Properties properties;
     private Neo4jConnection connect;
+    private boolean isConnected;
 
     //Paramètres Neo4j
     private String username = "neo4j";
-    private String password = "Ch3va|e";
+    private String password = "neo4j";
 
     //Paramètres modèle
     private int dureeDeVie = 1;
@@ -30,7 +31,11 @@ public class DAO {
         properties.put("password", password);
         try{
             connect = new Driver().connect("jdbc:neo4j://localhost:7474", properties);
-        } catch (Exception e){};
+            isConnected = true;
+        } catch (Exception e){
+            System.out.println("Connexion au serveur impossible.\nVérifiez votre username/password.");
+            isConnected = false;
+        }
     }
 
     //Groups
@@ -333,7 +338,6 @@ public class DAO {
     private void removeFeuillesMarkov(String user){
         if(dureeDeVie > 0){
             String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(n) WHERE NOT (n)-[:NEXT]-() DETACH DELETE (n)";
-            System.out.println(query);
             try(ResultSet set = connect.createStatement().executeQuery(query)){
             } catch(Exception e){
                 System.out.println(e);
@@ -438,5 +442,8 @@ public class DAO {
         } catch(Exception e){
             System.out.println(e);
         }
+    }
+    public boolean isConnected(){
+        return isConnected;
     }
 }
