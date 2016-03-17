@@ -158,10 +158,10 @@ public class DAO {
 
     //Markovs
     public boolean nodeExists(int K, String user, List<String> docs){
-        String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
+        String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {docs:[\""+docs.get(0)+"\"";
         for(int i=1; i<docs.size(); i++)
-            query += ", doc"+i+":\""+docs.get(i)+"\"";
-        query += "}) return count(n)";
+            query += ", \""+docs.get(i)+"\"";
+        query += "]}) return count(n)";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
             int i=0;
@@ -174,13 +174,13 @@ public class DAO {
         }
     }
     public void lier(int K, String user, List<String> oldDocs, List<String> newDocs){
-        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
-            query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
-        query += "}), (m2:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
+            query += ", \""+oldDocs.get(i)+"\"";
+        query += "]}), (m2:Markov"+K+" {docs: [\""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
-            query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {fin:"+(getNbSessions(user)+dureeDeVie)+"}]->(m2)";
+            query += ", \""+newDocs.get(i)+"\"";
+        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {fin:"+(getNbSessions(user)+dureeDeVie)+"}]->(m2)";
         //MODIFICATION
         //query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
 
@@ -209,13 +209,13 @@ public class DAO {
         }
     }
     public void updateLien(int K, String user, List<String> oldDocs, List<String> newDocs, int cpt){
-        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(m1:Markov"+K+" {docs: [\""+oldDocs.get(0)+"\"";
         for(int i=1; i<oldDocs.size(); i++)
-            query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
-        query += "})-[rel:NEXT]->(m2:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
+            query += ", \""+oldDocs.get(i)+"\"";
+        query += "]})-[rel:NEXT]->(m2:Markov"+K+" {docs: i[\""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
-            query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.cpt = "+(cpt+1);
+            query += ", \""+newDocs.get(i)+"\"";
+        query += "]})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.cpt = "+(cpt+1);
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
@@ -223,10 +223,10 @@ public class DAO {
         }
     }
     public void addMarkovNode(int K, String user, List<String> docs){
-        String query = "MATCH (u:User {name:\""+user+"\"}) CREATE (u)-[:HAS]->(:Markov"+K+" {doc0: \""+docs.get(0)+"\"";
+        String query = "MATCH (u:User {name:\""+user+"\"}) CREATE (u)-[:HAS]->(:Markov"+K+" {docs: [\""+docs.get(0)+"\"";
         for(int i=1; i<docs.size(); i++)
-            query += ", doc"+i+": \""+docs.get(i)+"\"";
-        query += "})";
+            query += ", \""+docs.get(i)+"\"";
+        query += "]})";
         try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
             System.out.println(e);
@@ -290,24 +290,24 @@ public class DAO {
         for(int i=1; i<5; i++){
             out.add(new Hashtable<String, Double>());
 
-            //GEstion noeud autre groupe
-            String query = "MATCH (:User {name:\""+user+"\"})<-[:CONTAINS]-(:Group)-[:CONTAINS]->(:User)-[:HAS]->(:Markov"+i+" {doc0: \""+session.get(session.size()-i)+"\"";
+            //Gestion noeud autre groupe
+            String query = "MATCH (:User {name:\""+user+"\"})<-[:CONTAINS]-(:Group)-[:CONTAINS]->(:User)-[:HAS]->(:Markov"+i+" {docs: [\""+session.get(session.size()-i)+"\"";
             for(int j=session.size()-i+1; j<session.size(); j++)
-                query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
-            query += "})-[rel:NEXT]->(d:Markov"+i+") ";
-            //MODIFICATIOn
+                query += ", \""+session.get(j)+"\"";
+            query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
+            //MODIFICATION
             //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
-            query += "RETURN d.doc"+(i-1)+" as doc ";
+            query += "RETURN d.docs["+(i-1)+"] as doc ";
             query += "UNION ALL ";
 
             // GEstion de nos noeud
-            query += "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+i+" {doc0: \""+session.get(session.size()-i)+"\"";
+            query += "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+i+" {docs: [\""+session.get(session.size()-i)+"\"";
             for(int j=session.size()-i+1; j<session.size(); j++)
-                query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
-            query += "})-[rel:NEXT]->(d:Markov"+i+") ";
+                query += ", \""+session.get(j)+"\"";
+            query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
             //MODIFICATION
             //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
-            query += "RETURN d.doc"+(i-1)+" as doc ";
+            query += "RETURN d.docs["+(i-1)+"] as doc ";
 
             try(ResultSet set = connect.createStatement().executeQuery(query)){
                 int total=0;
