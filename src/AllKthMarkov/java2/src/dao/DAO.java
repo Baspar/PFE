@@ -23,6 +23,7 @@ public class DAO {
 
     //Paramètres modèle
     private int dureeDeVie = 100;
+    private double pourcentageMinUserVector = 0.05;
 
     //Constructeur
     public DAO(){
@@ -149,14 +150,6 @@ public class DAO {
             return new ArrayList<String>();
         }
     }
-    public void resizeVectors(){
-        String query = "MATCH (n) WHERE n:User OR n:Group SET n.vector = n.vector + toFloat(0)";
-
-        try(ResultSet set = connect.createStatement().executeQuery(query)){
-        } catch(Exception e){
-            System.out.println(e);
-        }
-    }
     private void incrementNbSessionsUser(String user){
         String query = "MATCH (u:User {name:\""+user+"\"}) WITH u, u.nbSessions+1 AS nbSessions SET u.nbSessions = nbSessions";
 
@@ -270,6 +263,8 @@ public class DAO {
             removeLiensVides(user);
             removeFeuillesMarkov(user);
 
+            updateUserVector(user, session);
+
             for(int i=1; i<Math.min(5, session.size()); i++){
                 Vector<String> oldDocs = new Vector<String>();
                 for(int j=0; j<i; j++)
@@ -364,6 +359,45 @@ public class DAO {
         }
     }
 
+    //Vectors
+    private void resizeVectors(){
+        String query = "MATCH (n) WHERE n:User OR n:Group SET n.vector = n.vector + toFloat(0)";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    private void updateUserVector(String user, List<String> session){
+        int nbSessions = getNbSessions(user);
+        int nbCategories = getNbCategories();
+        int tailleSession = session.size();
+        double pourcentageNew = Math.max( ((double)1)/(nbSessions+1), pourcentageMinUserVector);
+        double pourcentageOld = 1-pourcentageNew;
+
+        Vector<Double> sessionVector = new Vector<Double>();
+        for(int i=0; i<nbCategories; i++)
+            sessionVector.add(0.);
+
+        for(String doc : session){
+            int i=getCategorie(doc);
+            sessionVector.set(i, sessionVector.get(i)+1);
+        }
+
+        for(int i=0; i<nbCategories; i++)
+            sessionVector.set(i, sessionVector.get(i)/tailleSession);
+
+        String query = "MATCH (u:User {name:\""+user+"\"}) SET u.vector = [ u.vector[0]*"+pourcentageOld+"+"+sessionVector.get(0)+"*"+pourcentageNew;
+        for(int i=1; i<nbCategories; i++)
+            query += ", u.vector["+i+"]*"+pourcentageOld+"+"+sessionVector.get(i)+"*"+pourcentageNew;
+        query += "]";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
     //Documents
     public int addDocument(String doc, String categorie){
         if(getCategorieId(categorie) != -1){
@@ -389,6 +423,18 @@ public class DAO {
         } catch(Exception e){
             System.out.println(e);
             return false;
+        }
+    }
+    public int getCategorie(String doc){
+        String query = "MATCH (c:Categorie)-[]-(:Doc {name: \""+doc+"\"}) RETURN c.cpt";
+        int out = -1;
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+            if(set.next())
+                out=set.getInt("c.cpt");
+        } catch(Exception e){
+            System.out.println(e);
+        } finally {
+            return out;
         }
     }
 
