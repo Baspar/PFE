@@ -22,7 +22,7 @@ public class DAO {
     private String password = "neo4j";
 
     //Paramètres modèle
-    private int dureeDeVie = 1;
+    private int dureeDeVie = 100;
 
     //Constructeur
     public DAO(){
@@ -285,7 +285,7 @@ public class DAO {
     }
     public Vector<Hashtable<String, Double>> guessNextDocs(String user, Vector<String> session){
         Vector<Hashtable<String, Double>> out = new Vector<Hashtable<String, Double>>();
-        for(int i=1; i<5; i++){
+        for(int i=1; i<Math.min(5, session.size()+1); i++){
             out.add(new Hashtable<String, Double>());
 
             //Gestion noeud autre groupe
@@ -295,7 +295,7 @@ public class DAO {
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
             //MODIFICATION
             //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
-            query += "RETURN d.docs["+(i-1)+"] as doc ";
+            query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt ";
             query += "UNION ALL ";
 
             // GEstion de nos noeud
@@ -305,25 +305,24 @@ public class DAO {
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
             //MODIFICATION
             //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
-            query += "RETURN d.docs["+(i-1)+"] as doc ";
+            query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt";
 
             try(ResultSet set = connect.createStatement().executeQuery(query)){
                 int total=0;
                 while(set.next()){
                     String doc = set.getString("doc");
                     //MODIFICATION
-                    //Double cpt = set.getDouble("rel.cpt");
-                    //total+=cpt;
-                    total++;
+                    Double cpt = set.getDouble("cpt");
+                    total+=cpt;
                     if(out.get(i-1).containsKey(doc)){
                         double old = out.get(i-1).get(doc);
                         //MODIFICATION
-                        //out.get(i-1).put(doc, cpt+old);
-                        out.get(i-1).put(doc, old+1);
+                        out.get(i-1).put(doc, cpt+old);
+                        //out.get(i-1).put(doc, old+1);
                     } else {
                         //MODIFICATION
-                        //out.get(i-1).put(doc, cpt);
-                        out.get(i-1).put(doc, 1.);
+                        out.get(i-1).put(doc, cpt);
+                        //out.get(i-1).put(doc, 1.);
                     }
                 }
                 for(String key : out.get(i-1).keySet()){
