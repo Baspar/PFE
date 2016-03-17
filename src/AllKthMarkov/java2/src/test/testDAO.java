@@ -86,13 +86,13 @@ public class testDAO {
         isOk = dao.addDocument("Livre idiot", "Peche");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
         System.out.print("Ajout document \"Un chateau\"...");
-        isOk = dao.addDocument("Un chateau", "Peche");
+        isOk = dao.addDocument("Un chateau", "Chasse");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
         System.out.print("Ajout document \"Un pied\"...");
-        isOk = dao.addDocument("Un pied", "Peche");
+        isOk = dao.addDocument("Un pied", "Chasse");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
         System.out.print("Ajout document \"14 Vaches\"...");
-        isOk = dao.addDocument("14 Vaches", "Peche");
+        isOk = dao.addDocument("14 Vaches", "Chasse");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
         System.out.print("Ajout document \"15 Vaches\"...");
         isOk = dao.addDocument("15 Vaches", "AAA");
