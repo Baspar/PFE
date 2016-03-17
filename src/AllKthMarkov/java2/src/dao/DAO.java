@@ -15,8 +15,13 @@ import org.neo4j.jdbc.Neo4jConnection;
 public class DAO {
     private Properties properties;
     private Neo4jConnection connect;
+
+    //Paramètres Neo4j
     private String username = "neo4j";
     private String password = "Ch3va|e";
+
+    //Paramètres modèle
+    private int dureeDeVie = 1;
 
     //Constructeur
     public DAO(){
@@ -30,23 +35,25 @@ public class DAO {
 
     //Groups
     public void changeNumberOfGroup(int n){
-        ResultSet out = execQuery("match (g:Group) detach delete g");
-        for(int i=0; i<n; i++)
-            execQuery("merge (group"+i+":Group {name: \"group"+i+"\"})");
-        try{
-            out.close();
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:Group) detach delete n")){
         } catch(Exception e){
             System.out.println(e);
         }
+
+        for(int i=0; i<n; i++){
+            try(ResultSet set = connect.createStatement().executeQuery("merge (group"+i+":Group {name: \"group"+i+"\"})")){
+            } catch(Exception e){
+                System.out.println(e);
+            }
+        }
+
         initialise();
     }
     public Integer getNbGroup(){
         return getNbClass("Group");
     }
     public void link(String userName, int group){
-        ResultSet out = execQuery("MATCH (g:Group {name:\"group"+group+"\"}), (u:User {name:\""+userName+"\"}) CREATE (g)-[:CONTAINS]->(u)");
-        try{
-            out.close();
+        try(ResultSet set = connect.createStatement().executeQuery("MATCH (g:Group {name:\"group"+group+"\"}), (u:User {name:\""+userName+"\"}) CREATE (g)-[:CONTAINS]->(u)")){
         } catch(Exception e){
             System.out.println(e);
         }
@@ -62,29 +69,44 @@ public class DAO {
             i=(i+1)%max;
         }
     }
-    public void recompute(){
+    public void recompute(){//TODO
         initialise();
     }
 
     //Users
+    public int getNbSessions(String user){
+        try(ResultSet set = connect.createStatement().executeQuery("MATCH (u:User {name:\""+user+"\"}) RETURN u.nbSessions")){
+            if(set.next())
+                return set.getInt("u.nbSessions");
+            return -1;
+        } catch(Exception e){
+            System.out.println(e);
+            return -1;
+        }
+    }
     private void addUser(String name){
-        ResultSet out = execQuery("create ("+name+":User {name: \""+name+"\" })");
-        try{
-            out.close();
+        int nbCategories = getNbCategories();
+        String query = "create ("+name+":User {name: \""+name+"\" , nbSessions:0, userVector: [";
+        if(nbCategories>0){
+            query += "0";
+            for(int i=1; i<nbCategories; i++)
+                query += ", 0";
+        }
+        query += "]})";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
             System.out.println(e);
         }
     }
     private boolean userExists(String name){
-        try{
-            ResultSet set = execQuery("match (n:User)  where n.name=\""+name+"\" return count(n)");
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:User)  where n.name=\""+name+"\" return count(n)")){
             int i=-1;
-            if(set.next())
+            if(set .next())
                 i=set.getInt("count(n)");
-            set.close();
             return (i==1);
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return false;
         }
     }
@@ -99,38 +121,47 @@ public class DAO {
         return getNbClass("User");
     }
     public List<String> getUserNames(){
-        try{
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:User) return n.name")){
             List<String> out = new ArrayList<String>();
 
-            ResultSet set = execQuery("match (n:User) return n.name");
             while(set.next()){
                 out.add(set.getString("n.name"));
             }
 
-            set.close();
             return out;
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return new ArrayList<String>();
+        }
+    }
+    public void resizeUserVectors(){//TODO
+        int nbCategories = getNbCategories();
+        for(String user : getUserNames()){
+        }
+    }
+    private void incrementNbSessionsUser(String user){
+        String query = "MATCH (u:User {name:\""+user+"\"}) WITH u, u.nbSessions+1 AS nbSessions SET u.nbSessions = nbSessions";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
         }
     }
 
     //Markovs
     public boolean nodeExists(int K, String user, List<String> docs){
-        try{
-            String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
-            for(int i=1; i<docs.size(); i++)
-                query += ", doc"+i+":\""+docs.get(i)+"\"";
-            query += "}) return count(n)";
+        String query = "match (u:User {name:\""+user+"\"})-[:HAS]->(n:Markov"+K+" {doc0:\""+docs.get(0)+"\"";
+        for(int i=1; i<docs.size(); i++)
+            query += ", doc"+i+":\""+docs.get(i)+"\"";
+        query += "}) return count(n)";
 
-            ResultSet set = execQuery(query);
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
             int i=0;
             while(set.next())
                 i+=set.getInt("count(n)");
-            set.close();
             return (i>=1);
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return false;
         }
     }
@@ -141,31 +172,31 @@ public class DAO {
         query += "}), (m2:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
         for(int i=1; i<newDocs.size(); i++)
             query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
-        ResultSet out = execQuery(query);
-        try {
-            out.close();
-        } catch (Exception e ) {
-            e.printStackTrace();
+        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {fin:"+(getNbSessions(user)+dureeDeVie)+"}]->(m2)";
+        //MODIFICATION
+        //query += "})<-[:HAS]-(:User {name:\""+user+"\"}) CREATE (m1)-[:NEXT {cpt:1}]->(m2)";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
         }
     }
     public int getCptLien(int K, String user, List<String> oldDocs, List<String> newDocs){
-        try {
-            String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
-            for(int i=1; i<oldDocs.size(); i++)
-                query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
-            query += "})-[rel:NEXT]->(:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
-            for(int i=1; i<newDocs.size(); i++)
-                query += ", doc"+i+": \""+newDocs.get(i)+"\"";
-            query += "})<-[:HAS]-(:User {name:\""+user+"\"}) return rel.cpt";
-            ResultSet out = execQuery(query);
+        String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(:Markov"+K+" {doc0: \""+oldDocs.get(0)+"\"";
+        for(int i=1; i<oldDocs.size(); i++)
+            query += ", doc"+i+": \""+oldDocs.get(i)+"\"";
+        query += "})-[rel:NEXT]->(:Markov"+K+" {doc0: \""+newDocs.get(0)+"\"";
+        for(int i=1; i<newDocs.size(); i++)
+            query += ", doc"+i+": \""+newDocs.get(i)+"\"";
+        query += "})<-[:HAS]-(:User {name:\""+user+"\"}) return rel.cpt";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
             int i=-1;
-            if(out.next())
-                i=out.getInt("rel.cpt");
-            out.close();
+            if(set.next())
+                i=set.getInt("rel.cpt");
             return i;
-        } catch (Exception e ) {
-            e.printStackTrace();
+        } catch(Exception e){
+            System.out.println(e);
             return -1;
         }
     }
@@ -177,11 +208,10 @@ public class DAO {
         for(int i=1; i<newDocs.size(); i++)
             query += ", doc"+i+": \""+newDocs.get(i)+"\"";
         query += "})<-[:HAS]-(:User {name:\""+user+"\"}) SET rel.cpt = "+(cpt+1);
-        ResultSet out = execQuery(query);
-        try {
-            out.close();
-        } catch (Exception e ) {
-            e.printStackTrace();
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
         }
     }
     public void addMarkovNode(int K, String user, List<String> docs){
@@ -189,11 +219,9 @@ public class DAO {
         for(int i=1; i<docs.size(); i++)
             query += ", doc"+i+": \""+docs.get(i)+"\"";
         query += "})";
-        ResultSet out = execQuery(query);
-        try {
-            out.close();
-        } catch (Exception e ) {
-            e.printStackTrace();
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
         }
     }
     public void renforcer(int K, String user, List<String> oldDocs, String newDoc){
@@ -208,12 +236,13 @@ public class DAO {
         if(!nodeExists(K, user, newDocs))
             addMarkovNode(K, user, newDocs);
 
-        int cptActuel = getCptLien(K, user, oldDocs, newDocs);
-        if(cptActuel < 1){
+        //MODIFICATION
+        //int cptActuel = getCptLien(K, user, oldDocs, newDocs);
+        //if(cptActuel < 1){
             lier(K, user, oldDocs, newDocs);
-        }else{
-            updateLien(K, user, oldDocs, newDocs, cptActuel);
-        }
+        //}else{
+            //updateLien(K, user, oldDocs, newDocs, cptActuel);
+        //}
 
     }
     public int addSession(String user, List<String> session){
@@ -221,6 +250,9 @@ public class DAO {
             for(int i=0; i<session.size(); i++)
                 if(!docExists(session.get(i)))
                     return (i+2);
+
+            removeLiensPerimes(user);
+            removeFeuillesMarkov(user);
 
             for(int i=1; i<Math.min(5, session.size()); i++){
                 Vector<String> oldDocs = new Vector<String>();
@@ -237,6 +269,9 @@ public class DAO {
                     renforcer(i, user, oldDocs, newDoc);
                 }
             }
+
+            incrementNbSessionsUser(user);
+
             return 0;
         } else {
             return 1;
@@ -252,7 +287,9 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
             query += "})-[rel:NEXT]->(d:Markov"+i+") ";
-            query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
+            //MODIFICATIOn
+            //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
+            query += "RETURN d.doc"+(i-1)+" as doc ";
             query += "UNION ALL ";
 
             // GEstion de nos noeud
@@ -260,41 +297,68 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", doc"+(j-session.size()+i)+": \""+session.get(j)+"\"";
             query += "})-[rel:NEXT]->(d:Markov"+i+") ";
-            query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
-            ResultSet rs = execQuery(query);
-            try{
+            //MODIFICATION
+            //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
+            query += "RETURN d.doc"+(i-1)+" as doc ";
+
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
                 int total=0;
-                while(rs.next()){
-                    String doc = rs.getString("doc");
-                    Double cpt = rs.getDouble("rel.cpt");
-                    total+=cpt;
+                while(set.next()){
+                    String doc = set.getString("doc");
+                    //MODIFICATION
+                    //Double cpt = set.getDouble("rel.cpt");
+                    //total+=cpt;
+                    total++;
                     if(out.get(i-1).containsKey(doc)){
                         double old = out.get(i-1).get(doc);
-                        out.get(i-1).put(doc, cpt+old);
+                        //MODIFICATION
+                        //out.get(i-1).put(doc, cpt+old);
+                        out.get(i-1).put(doc, old+1);
                     } else {
-                        out.get(i-1).put(doc, cpt);
+                        //MODIFICATION
+                        //out.get(i-1).put(doc, cpt);
+                        out.get(i-1).put(doc, 1.);
                     }
                 }
                 for(String key : out.get(i-1).keySet()){
                     double old = out.get(i-1).get(key);
                     out.get(i-1).put(key, old/total);
                 }
-            } catch (Exception e){ System.out.println(e);}
+            } catch(Exception e){
+                System.out.println(e);
+            }
         }
         return out;
+    }
+    private void removeFeuillesMarkov(String user){
+        if(dureeDeVie > 0){
+            String query = "MATCH (:User {name:\""+user+"\"})-[:HAS]->(n) WHERE NOT (n)-[:NEXT]-() DETACH DELETE (n)";
+            System.out.println(query);
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
+        }
+    }
+    private void removeLiensPerimes(String user){
+        if(dureeDeVie > 0){
+            String query = "MATCH (u:User {name:\""+user+"\"})-[:HAS]->()-[rel:NEXT]->() WHERE rel.fin = u.nbSessions DELETE rel";
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
+        }
     }
 
     //Documents
     public int addDocument(String doc, String categorie){
         if(getCategorieId(categorie) != -1){
             if(!docExists(doc)){
-                ResultSet out = execQuery("MATCH (c:Categorie {name:\""+categorie+"\"}) CREATE (c)<-[:HASCATEGORIE]-(:Doc {name: \""+doc+"\" })");
-                try{
-                    out.close();
+                try(ResultSet set = connect.createStatement().executeQuery("MATCH (c:Categorie {name:\""+categorie+"\"}) CREATE (c)<-[:HASCATEGORIE]-(:Doc {name: \""+doc+"\" })")){
+                    return 0;
                 } catch(Exception e){
                     System.out.println(e);
-                } finally {
-                    return 0;
+                    return 1;
                 }
             } else {
                 return 2;
@@ -303,31 +367,27 @@ public class DAO {
         return 1;
     }
     public boolean docExists(String doc){
-        try{
-            ResultSet set = execQuery("match (d:Doc {name:\""+doc+"\"}) return count(d)");
+        try(ResultSet set = connect.createStatement().executeQuery("match (d:Doc {name:\""+doc+"\"}) return count(d)")){
             int i=0;
             while(set.next())
                 i+=set.getInt("count(d)");
-            set.close();
             return (i>=1);
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return false;
         }
     }
 
     //Catégories
     public int getCategorieId(String cat){
-        try{
-            String query = "match (n:Categorie {name:\""+cat+"\"}) RETURN n.cpt";
-            ResultSet set = execQuery(query);
+        String query = "match (n:Categorie {name:\""+cat+"\"}) RETURN n.cpt";
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
             int i=-1;
             if(set.next())
                 i=set.getInt("n.cpt");
-            set.close();
             return i;
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return -1;
         }
     }
@@ -335,62 +395,46 @@ public class DAO {
         return getNbClass("Categorie");
     }
     public List<String> getCategories(){
-        try{
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:Category) return n.name")){
             List<String> out = new ArrayList<String>();
 
-            ResultSet set = execQuery("match (n:Category) return n.name");
             while(set.next()){
                 out.add(set.getString("n.name"));
             }
 
-            set.close();
             return out;
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return new ArrayList<String>();
         }
     }
     public int addCategorie(String categorie){
         int nbCategories = getNbCategories();
         if(getCategorieId(categorie)==-1){
-            ResultSet out = execQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})");
-            try{
-                out.close();
-            } catch (Exception e){
-                System.out.println(e);
-            } finally {
+            try(ResultSet set = connect.createStatement().executeQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})")){
                 return 0;
+            } catch(Exception e){
+                System.out.println(e);
+                return 1;
             }
         }
         return 1;
     }
 
     //Autre
-    private ResultSet execQuery(String query){
-        try{
-            return connect.createStatement().executeQuery(query);
-        } catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-    }
-    private Integer getNbClass(String className){
-        try{
-            ResultSet set = execQuery("match (n:"+className+") return count(n)");
+    private int getNbClass(String className){
+        try(ResultSet set = connect.createStatement().executeQuery("match (n:"+className+") return count(n)")){
             int i=-1;
             if(set.next())
                 i=set.getInt("count(n)");
-            set.close();
             return i;
-        } catch (Exception e){
-            System.out.print(e);
+        } catch(Exception e){
+            System.out.println(e);
             return -1;
         }
     }
     public void clearDB(){
-        ResultSet out = execQuery("match (n) detach delete n");
-        try{
-            out.close();
+        try(ResultSet out = connect.createStatement().executeQuery("match (n) detach delete n")){
         } catch(Exception e){
             System.out.println(e);
         }
