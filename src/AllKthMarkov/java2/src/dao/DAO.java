@@ -45,20 +45,31 @@ public class DAO {
             System.out.println(e);
         }
 
+        int nbCategories = getNbCategories();
+
         for(int i=0; i<n; i++){
-            try(ResultSet set = connect.createStatement().executeQuery("merge (group"+i+":Group {name: \"group"+i+"\"})")){
+            String query ="CREATE (:Group {name: \"Group"+i+"\", vector:[";
+            if(nbCategories>0){
+                query += "toFloat(0)";
+                for(int j=1; j<nbCategories; j++)
+                    query += ", toFloat(0)";
+            }
+            query += "]})";
+
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
             } catch(Exception e){
                 System.out.println(e);
             }
         }
 
         initialise();
+        recompute();
     }
     public Integer getNbGroup(){
         return getNbClass("Group");
     }
     public void link(String userName, int group){
-        try(ResultSet set = connect.createStatement().executeQuery("MATCH (g:Group {name:\"group"+group+"\"}), (u:User {name:\""+userName+"\"}) CREATE (g)-[:CONTAINS]->(u)")){
+        try(ResultSet set = connect.createStatement().executeQuery("MATCH (g:Group {name:\"Group"+group+"\"}), (u:User {name:\""+userName+"\"}) CREATE (g)-[:CONTAINS]->(u)")){
         } catch(Exception e){
             System.out.println(e);
         }
@@ -75,7 +86,6 @@ public class DAO {
         }
     }
     public void recompute(){//TODO
-        initialise();
     }
 
     //Users
@@ -91,11 +101,11 @@ public class DAO {
     }
     private void addUser(String name){
         int nbCategories = getNbCategories();
-        String query = "create ("+name+":User {name: \""+name+"\" , nbSessions:0, userVector: [";
+        String query = "create ("+name+":User {name: \""+name+"\" , nbSessions:0, vector: [";
         if(nbCategories>0){
-            query += "0";
+            query += "toFloat(0)";
             for(int i=1; i<nbCategories; i++)
-                query += ", 0";
+                query += ", toFloat(0)";
         }
         query += "]})";
 
@@ -139,8 +149,8 @@ public class DAO {
             return new ArrayList<String>();
         }
     }
-    public void resizeUserVectors(){
-        String query = "MATCH (u:User) SET u.userVector = u.userVector  + 0";
+    public void resizeVectors(){
+        String query = "MATCH (n) WHERE n:User OR n:Group SET n.vector = n.vector + toFloat(0)";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
         } catch(Exception e){
@@ -293,8 +303,6 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", \""+session.get(j)+"\"";
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
-            //MODIFICATION
-            //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
             query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt ";
             query += "UNION ALL ";
 
@@ -303,8 +311,6 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", \""+session.get(j)+"\"";
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
-            //MODIFICATION
-            //query += "RETURN rel.cpt, d.doc"+(i-1)+" as doc ";
             query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt";
 
             try(ResultSet set = connect.createStatement().executeQuery(query)){
@@ -425,7 +431,7 @@ public class DAO {
         int nbCategories = getNbCategories();
         if(getCategorieId(categorie)==-1){
             try(ResultSet set = connect.createStatement().executeQuery("create ("+categorie+":Categorie {name:\""+categorie+"\", cpt:"+nbCategories+"})")){
-                resizeUserVectors();
+                resizeVectors();
                 return 0;
             } catch(Exception e){
                 System.out.println(e);
