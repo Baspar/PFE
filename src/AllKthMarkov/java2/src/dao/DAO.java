@@ -303,7 +303,7 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", \""+session.get(j)+"\"";
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
-            query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt ";
+            query += "RETURN LAST(d.docs) as doc, SIZE(rel.fins) AS cpt ";
             query += "UNION ALL ";
 
             // GEstion de nos noeud
@@ -311,24 +311,19 @@ public class DAO {
             for(int j=session.size()-i+1; j<session.size(); j++)
                 query += ", \""+session.get(j)+"\"";
             query += "]})-[rel:NEXT]->(d:Markov"+i+") ";
-            query += "RETURN d.docs["+(i-1)+"] as doc, SIZE(rel.fins) AS cpt";
+            query += "RETURN LAST(d.docs) as doc, SIZE(rel.fins) AS cpt";
 
             try(ResultSet set = connect.createStatement().executeQuery(query)){
                 int total=0;
                 while(set.next()){
                     String doc = set.getString("doc");
-                    //MODIFICATION
                     Double cpt = set.getDouble("cpt");
                     total+=cpt;
                     if(out.get(i-1).containsKey(doc)){
                         double old = out.get(i-1).get(doc);
-                        //MODIFICATION
                         out.get(i-1).put(doc, cpt+old);
-                        //out.get(i-1).put(doc, old+1);
                     } else {
-                        //MODIFICATION
                         out.get(i-1).put(doc, cpt);
-                        //out.get(i-1).put(doc, 1.);
                     }
                 }
                 for(String key : out.get(i-1).keySet()){
