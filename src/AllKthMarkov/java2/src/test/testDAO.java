@@ -145,8 +145,8 @@ public class testDAO {
         System.out.print("Ajout session à user1...");
         isOk = dao.addSession("User1", session);
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
-        System.out.print("Ajout session2 à user2...");
-        isOk = dao.addSession("User2", session2);
+        System.out.print("Ajout session2 à user6...");
+        isOk = dao.addSession("User6", session2);
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
         System.out.print("Ajout session1 à user1...");
         isOk = dao.addSession("User1", session1);
@@ -165,5 +165,7 @@ public class testDAO {
         System.out.println("Debut requete...");
         System.out.println(dao.guessNextDocs("User6", sessionTest));
         System.out.println("DONE");
+
+        dao.calculVectorGroupe();
     }
 }

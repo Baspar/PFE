@@ -397,6 +397,27 @@ public class DAO {
             System.out.println(e);
         }
     }
+    private void calculVectorGroupe(int g){
+        int nbCategories = getNbCategories();
+
+        String query = "MATCH (g:Group {name:\"Group"+g+"\"})-[]-(u:User) WITH g, avg(u.vector[0]) AS a0";
+        for(int i=1; i<nbCategories; i++)
+            query += ", avg(u.vector["+i+"]) AS a"+i;
+        query += " SET g.vector = [a0";
+        for(int i=1; i<nbCategories; i++)
+            query += ", a"+i;
+        query += "]";
+
+        try(ResultSet set = connect.createStatement().executeQuery(query)){
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    public void calculVectorGroupe(){
+        int nbGroup = getNbGroup();
+        for(int i=0; i<nbGroup; i++)
+            calculVectorGroupe(i);
+    }
 
     //Documents
     public int addDocument(String doc, String categorie){
