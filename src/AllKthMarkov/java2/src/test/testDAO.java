@@ -15,7 +15,8 @@ public class testDAO {
         String instruction="";
         String userConnected="";
         Scanner in = new Scanner(System.in);
-        System.out.println();
+        for(int i=0; i<200; i++)
+            System.out.println();
         System.out.println("Bienvenue, tapez HELP pour afficher l'aide.");
         while(!instruction.equals("EXIT") && !instruction.equals("Q")){
             System.out.println();
@@ -29,7 +30,7 @@ public class testDAO {
                 instruction = line[0].toUpperCase();
                 if(instruction.equals("EXIT") || instruction.equals("Q")){
                     System.out.println("   Fermeture du programme");
-                } else if (instruction.equals("ADD")){
+                } else if (instruction.equals("ADD")){//OK
                     if(line.length > 1){
                         String type = line[1].toUpperCase();
                         if(type.equals("CAT")){
@@ -57,28 +58,56 @@ public class testDAO {
                             }
                         }else if(type.equals("USER")){
                             String user;
-                            System.out.print("   Choisissez le nom d'utilisateur: ");
-                            user = in.nextLine();
-                            if(dao.addUserIfNotPresent(user)==0){
-                                System.out.println("   Succès de l'ajout d'utilisateur");
-                            }else{
-                                System.out.println("   Un utilisateur portant ce nom existe déjà)");
+                            if(dao.getNbGroup() > 0){
+                                System.out.print("   Choisissez le nom d'utilisateur: ");
+                                user = in.nextLine();
+                                if(dao.addUserIfNotPresent(user)==0){
+                                    System.out.println("   Succès de l'ajout d'utilisateur");
+                                }else{
+                                    System.out.println("   Un utilisateur portant ce nom existe déjà)");
+                                }
+                            } else {
+                                System.out.print("   Il n'y a pas de groupe. Ajoutez-en en premier");
                             }
                         }else{
-                            System.out.println("   Type d'ajout inexistant");
+                            System.out.println("   Type \""+type+"\" non reconnu");
                         }
                     } else {
                         System.out.println("   Type d'ajout manquant");
                     }
+                } else if (instruction.equals("TEST")){//OK
+                    System.out.println("   Lancement du test...:");
+                    testRandom(false);
                 } else if (instruction.equals("HELP")){
                     System.out.println("   Liste des commandes:");
                     System.out.println("     HELP => Afficher l'aide");
                     System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
-                    System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
+                    System.out.println("     ADD DOC/CAT/USER => Ajouter des documents, catégories, utilisateurs");
+                    System.out.println("     CHGRP <nombre> => Changer le nombre de groupes");
+                    System.out.println("     TEST => Lancer un environnement de test");
                     System.out.println("     CONNECT <user> => Connexion");
+                    System.out.println("     KMEANS => Effectuer un K-Means");
                     System.out.println("     DISCONNECT <user> => Déconnexion");
                     System.out.println("     CLEAR => Effacer la base de donnée");
+                    System.out.println("     C => Effacer l'écran");
                     System.out.println("     EXIT => Quitter");
+                } else if (instruction.equals("C") || instruction.equals("L")){//OK
+                    for(int i=0; i<200; i++)
+                        System.out.println();
+                } else if (instruction.equals("KMEANS")){//OK
+                    dao.recompute();
+                } else if (instruction.equals("CHGRP")){//OK
+                    if(line.length > 1){
+                        int nb = Integer.parseInt(line[1]);
+                        if(nb > 0){
+                            dao.changeNumberOfGroup(nb);
+                            System.out.println("   Passage à "+nb+" groupe(s) effectué");
+                        }else{
+                            System.out.println("   Veuillez rentrer un chiffre correct");
+                        }
+                    } else {
+                        System.out.println("   Nombre de groupe manquant");
+                    }
                 } else if (instruction.equals("CONNECT")){//OK
                     if(line.length > 1){
                         String user = line[1];
@@ -106,6 +135,8 @@ public class testDAO {
                             System.out.println("   Liste utilisateur | Groupe");
                             for(Map.Entry<String, String> ent : dao.getUsersGroups().entrySet())
                                 System.out.println("     "+ent.getKey()+"   | "+ent.getValue());
+                        }else{
+                            System.out.println("   Type \""+type+"\" non reconnu");
                         }
                     } else {
                         System.out.println("   Type manquant (DOC, CAT, USER)");
@@ -115,7 +146,7 @@ public class testDAO {
                         dao.clearDB();
                         System.out.println("   Effacement OK");
                     }else{
-                        System.out.println("   Veuillez vous déconnecter");
+                        System.out.println("   Veuillez vous déconnecter pour effacer");
                     }
                 } else if (instruction.equals("DISCONNECT")){//OK
                     if(!userConnected.equals("")){
@@ -125,7 +156,7 @@ public class testDAO {
                         System.out.println("   Vous n'êtes pas connecté");
                     }
                 } else {
-                    System.out.println("   Commande non reconnue");
+                    System.out.println("   Commande \""+instruction+"\" non reconnue");
                 }
             }
         }

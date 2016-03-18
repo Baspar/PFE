@@ -87,7 +87,7 @@ public class DAO {
         HashMap<String, Integer> out = new HashMap<String, Integer>();
         int nbGroups = getNbGroup();
 
-        String query = "MATCH (g:Group)--(u:User) return g.name AS name, COUNT(u) AS cpt";
+        String query = "MATCH (g:Group) OPTIONAL MATCH (g)--(u:User) return g.name AS name, COUNT(u) AS cpt";
         try(ResultSet set = connect.createStatement().executeQuery(query)){
             while(set.next())
                 out.put(set.getString("name"), set.getInt("cpt"));
@@ -96,6 +96,32 @@ public class DAO {
             System.out.println(e);
             return new HashMap<String, Integer>();
         }
+    }
+    public void linkToClosestGroup(String user){
+        HashMap<String, Vector<Double>> groupVector = getVector("Group");
+        HashMap<String, Integer> nbUsersInGroups = getNbUsersInGroups();
+        Vector<Double> userVector = getVector("User").get(user);
+
+
+        String groupMin = "";
+        double distMin = -1.;
+        int nbUsers = 0;
+
+        for(Map.Entry<String, Vector<Double>> ent : groupVector.entrySet()){
+            double newDist = distance(userVector, ent.getValue());
+            int newNbUsers = nbUsersInGroups.get(ent.getKey());
+            if      (distMin == -1 // Premier groupe
+                    || newDist < distMin // Nouveau groupe plus proche
+                    || (newDist == distMin && newNbUsers < nbUsers) //Groupe aussi proche mais moins rempli
+            ){
+                distMin = newDist;
+                groupMin = ent.getKey();
+                nbUsers = newNbUsers;
+            }
+        }
+
+        link(user, groupMin);
+        calculVectorGroupe(groupMin);
     }
 
     //K-means
@@ -109,7 +135,7 @@ public class DAO {
         }
         calculVectorGroupes();
     }
-    public void recompute(){//WIP
+    public void recompute(){
         HashMap<String, Vector<Double>> userVector = getVector("User");
         HashMap<String, Vector<Double>> groupVector = getVector("Group");
         HashMap<String, String> usersGroups = getUsersGroups();
@@ -132,25 +158,26 @@ public class DAO {
                 double distMin = distance(userVector.get(user), groupVector.get(usersGroups.get(user)));
                 String groupMin = usersGroups.get(user);
 
-                System.out.println("  "+user+": "+groupMin+"["+distMin+"]");
+                System.err.println("  "+user+": "+groupMin+"["+distMin+"]");
 
                 for(Map.Entry<String, Vector<Double>> ent : groupVector.entrySet()){
                     double newDist = distance(userVector.get(user), ent.getValue());
-                    System.out.print("       : "+ent.getKey()+"["+newDist+"]");
+                    System.err.print("       : "+ent.getKey()+"["+newDist+"]");
                     if(newDist < distMin){
                         nbUsersInGroups.put(groupMin, nbUsersInGroups.get(groupMin)-1);
                         nbUsersInGroups.put(ent.getKey(), nbUsersInGroups.get(ent.getKey())+1);
-                        System.out.println(" =>");
+                        System.err.println(" =>");
                         hasChanged = true;
                         distMin = newDist;
                         groupMin = ent.getKey();
                     } else {
-                        System.out.println(" X");
+                        System.err.println(" X");
                     }
                 }
 
                 usersGroups.put(user, groupMin);
             }
+
 
             if(hasChanged){
                 for(String group : groupVector.keySet()){
@@ -178,7 +205,6 @@ public class DAO {
         for(Map.Entry<String, String> ent : usersGroups.entrySet())
             link(ent.getKey(), ent.getValue());
         calculVectorGroupes();
-
     }
 
     //Users
@@ -192,7 +218,6 @@ public class DAO {
                 String group = set.getString("group");
                 out.put(user, group);
             }
-            System.out.println(out);
             return out;
         } catch(Exception e){
             System.out.println(e);
@@ -211,7 +236,7 @@ public class DAO {
     }
     private void addUser(String name){
         int nbCategories = getNbCategories();
-        String query = "create ("+name+":User {name: \""+name+"\" , nbSessions:0, vector: [";
+        String query = "create (:User {name: \""+name+"\" , nbSessions:0, vector: [";
         if(nbCategories>0){
             query += "toFloat(0)";
             for(int i=1; i<nbCategories; i++)
@@ -220,6 +245,7 @@ public class DAO {
         query += "]})";
 
         try(ResultSet set = connect.createStatement().executeQuery(query)){
+            linkToClosestGroup(name);
         } catch(Exception e){
             System.out.println(e);
         }
@@ -545,38 +571,50 @@ public class DAO {
             System.out.println(e);
         }
     }
-    private void calculVectorGroupe(String group){
-        int nbCategories = getNbCategories();
+        private void calculVectorGroupe(String group){
+            int nbCategories = getNbCategories();
 
-        String query = "MATCH (g:Group {name:\""+group+"\"})-[]-(u:User) WITH g, avg(u.vector[0]) AS a0";
-        for(int i=1; i<nbCategories; i++)
-            query += ", avg(u.vector["+i+"]) AS a"+i;
-        query += " SET g.vector = [a0";
-        for(int i=1; i<nbCategories; i++)
-            query += ", a"+i;
-        query += "]";
+            String query = "MATCH (g:Group {name:\""+group+"\"})-[]-(u:User) WITH g";
+            if(nbCategories > 0){
+                query += ", avg(u.vector[0]) AS a0";
+                for(int i=1; i<nbCategories; i++)
+                    query += ", avg(u.vector["+i+"]) AS a"+i;
+            }
+            query += " SET g.vector = [";
+            if(nbCategories > 0){
+                query += "a0";
+                for(int i=1; i<nbCategories; i++)
+                    query += ", a"+i;
+            }
+            query += "]";
 
-        try(ResultSet set = connect.createStatement().executeQuery(query)){
-        } catch(Exception e){
-            System.out.println(e);
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
         }
-    }
-    private void calculVectorGroupe(int g){
-        int nbCategories = getNbCategories();
+        private void calculVectorGroupe(int g){
+            int nbCategories = getNbCategories();
 
-        String query = "MATCH (g:Group {name:\"Group"+g+"\"})-[]-(u:User) WITH g, avg(u.vector[0]) AS a0";
-        for(int i=1; i<nbCategories; i++)
-            query += ", avg(u.vector["+i+"]) AS a"+i;
-        query += " SET g.vector = [a0";
-        for(int i=1; i<nbCategories; i++)
-            query += ", a"+i;
-        query += "]";
+            String query = "MATCH (g:Group {name:\"Group"+g+"\"})-[]-(u:User) WITH g";
+            if(nbCategories > 0){
+                query += ", avg(u.vector[0]) AS a0";
+                for(int i=1; i<nbCategories; i++)
+                    query += ", avg(u.vector["+i+"]) AS a"+i;
+            }
+            query += " SET g.vector = [";
+            if(nbCategories > 0){
+                query+="a0";
+                for(int i=1; i<nbCategories; i++)
+                    query += ", a"+i;
+            }
+            query += "]";
 
-        try(ResultSet set = connect.createStatement().executeQuery(query)){
-        } catch(Exception e){
-            System.out.println(e);
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
         }
-    }
     public void calculVectorGroupes(){
         int nbGroup = getNbGroup();
         for(int i=0; i<nbGroup; i++)
@@ -697,8 +735,6 @@ public class DAO {
         try(ResultSet out = connect.createStatement().executeQuery("match (n) detach delete n")){
         } catch(Exception e){
             System.out.println(e);
-        }finally{
-            changeNumberOfGroup(5);
         }
     }
     public boolean isConnected(){
@@ -708,6 +744,6 @@ public class DAO {
         double out = 0.;
         for(int i=0; i<i1.size(); i++)
             out += Math.pow( (i1.get(i)-i2.get(i)), 2);
-        return Math.sqrt(out);
+        return out;
     }
 }
