@@ -30,6 +30,26 @@ public class testDAO {
                 instruction = line[0].toUpperCase();
                 if(instruction.equals("EXIT") || instruction.equals("Q")){
                     System.out.println("   Fermeture du programme");
+                } else if (instruction.equals("HELP")){
+                    System.out.println("   Liste des commandes:");
+                    System.out.println("     HELP => Afficher l'aide");
+                    System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
+                    System.out.println("     ADD DOC/CAT/USER/SESSION => Ajouter des documents, catégories, utilisateurs, sessions");
+                    System.out.println("     CHGRP <nombre> => Changer le nombre de groupes");
+                    System.out.println("     TEST => Lancer un environnement de test");
+                    System.out.println("     UNIT => Lancer un environnement de test unitaire");
+                    System.out.println("     CONNECT <user> => Connexion");
+                    System.out.println("     KMEANS => Effectuer un K-Means");
+                    System.out.println("     DISCONNECT <user> => Déconnexion");
+                    System.out.println("     CLEAR => Effacer la base de donnée");
+                    System.out.println("     C => Effacer l'écran");
+                    System.out.println("     EXIT => Quitter");
+                } else if (instruction.equals("UNIT")){//OK
+                    System.out.println("   Lancement du test unitaire...:");
+                    testUnit();
+                } else if (instruction.equals("TEST")){//OK
+                    System.out.println("   Lancement du test...:");
+                    testRandom();
                 } else if (instruction.equals("ADD")){//OK
                     if(line.length > 1){
                         String type = line[1].toUpperCase();
@@ -41,6 +61,33 @@ public class testDAO {
                                 System.out.println("   Succès de l'ajout de la catégorie");
                             } else {
                                 System.out.println("   Une catégorie portant ce nom existe déjà)");
+                            }
+                        }else if(type.equals("SESSION")){
+                            if(userConnected.equals("")){
+                                System.out.println("   Connectez vous avant d'ajouter une session ");
+                            } else {
+                                int i=0;
+                                Vector<String> session = new Vector<String>();
+                                String doc="";
+                                System.out.println("   Rentrez les noms des documents. Valider='.' et quitter='x' ");
+                                while(!doc.equals(".") && !doc.equals("x")){
+                                    System.out.print("   Rentrez le nom du document #"+i+": ");
+                                    doc = in.nextLine();
+                                    if(!doc.equals(".") && !doc.equals("x")){
+                                        if(dao.docExists(doc)){
+                                            session.add(doc);
+                                            i++;
+                                        } else {
+                                            System.out.println("     Le document \""+doc+"\" n'existe pas ");
+                                        }
+                                    }
+                                }
+                                if(doc.equals(".")){
+                                    dao.addSession(userConnected, session);
+                                    System.out.println("   Session ajoutée");
+                                } else if(doc.equals("x")){
+                                    System.out.println("   Session annulée");
+                                }
                             }
                         }else if(type.equals("DOC")){
                             String doc, cat;
@@ -67,7 +114,7 @@ public class testDAO {
                                     System.out.println("   Un utilisateur portant ce nom existe déjà)");
                                 }
                             } else {
-                                System.out.print("   Il n'y a pas de groupe. Ajoutez-en en premier");
+                                System.out.println("   Il n'y a pas de groupe. Ajoutez-en en premier");
                             }
                         }else{
                             System.out.println("   Type \""+type+"\" non reconnu");
@@ -75,22 +122,6 @@ public class testDAO {
                     } else {
                         System.out.println("   Type d'ajout manquant");
                     }
-                } else if (instruction.equals("TEST")){//OK
-                    System.out.println("   Lancement du test...:");
-                    testRandom(false);
-                } else if (instruction.equals("HELP")){
-                    System.out.println("   Liste des commandes:");
-                    System.out.println("     HELP => Afficher l'aide");
-                    System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
-                    System.out.println("     ADD DOC/CAT/USER => Ajouter des documents, catégories, utilisateurs");
-                    System.out.println("     CHGRP <nombre> => Changer le nombre de groupes");
-                    System.out.println("     TEST => Lancer un environnement de test");
-                    System.out.println("     CONNECT <user> => Connexion");
-                    System.out.println("     KMEANS => Effectuer un K-Means");
-                    System.out.println("     DISCONNECT <user> => Déconnexion");
-                    System.out.println("     CLEAR => Effacer la base de donnée");
-                    System.out.println("     C => Effacer l'écran");
-                    System.out.println("     EXIT => Quitter");
                 } else if (instruction.equals("C") || instruction.equals("L")){//OK
                     for(int i=0; i<200; i++)
                         System.out.println();
@@ -161,7 +192,7 @@ public class testDAO {
             }
         }
     }
-    private static void test(){
+    private static void testUnit(){
         int isOk;
 
         System.out.print("Nettoyage Base de données...");
@@ -202,11 +233,6 @@ public class testDAO {
         System.out.print("Ajout User9...");
         isOk = dao.addUserIfNotPresent("User9");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
-        for(int i=10; i<100; i++){
-            System.out.print("Ajout User"+i+"...");
-            isOk = dao.addUserIfNotPresent("User"+i);
-            System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
-        }
 
 
         System.out.println();
@@ -326,7 +352,7 @@ public class testDAO {
 
         dao.recompute();
     }
-    private static void testRandom(boolean justRequest){
+    private static void testRandom(){
         int nbUsers = 10;
         int nbCategories = 20;
         int nbDocs = 50;
@@ -344,77 +370,51 @@ public class testDAO {
 
         int isOk;
 
-        if(!justRequest){
-            //Clear
-            System.out.print("Nettoyage Base de données...");
-            dao.clearDB();
-            System.out.println(" DONE");
+        //Clear
+        System.out.print("Nettoyage Base de données...");
+        dao.clearDB();
+        System.out.println(" DONE");
 
 
-            System.out.println();
+        System.out.println();
 
 
-            //Users
-            for(int i=0; i<nbUsers; i++){
-                System.out.print(i+"/"+nbUsers+"> Ajout User"+i+"...");
-                isOk = dao.addUserIfNotPresent("User"+i);
-                System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
-            }
-
-
-            System.out.println();
-
-
-            //Catégories
-            for(int i=0; i<nbCategories; i++){
-                System.out.print(i+"/"+nbCategories+"> Ajout catégorie Cat"+i+"...");
-                isOk = dao.addCategorie("Cat"+i);
-                System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà présente)");
-            }
-
-
-            System.out.println();
-
-
-            //Documents
-            for(int i=0; i<nbDocs; i++){
-                int categorie = (int)Math.floor(Math.random() * nbCategories);
-                System.out.print(i+"/"+nbDocs+"> Ajout document \"Doc"+i+"\" [Cat"+categorie+"]...");
-                isOk = dao.addDocument("Doc"+i, "Cat"+categorie);
-                System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-            }
-
-
-            System.out.println();
-
-
-            //Sessions
-            for(int i=0; i<nbSessions; i++){
-                int user = (int) Math.floor(Math.random() * nbUsers);
-                int tailleSession = (int) Math.floor( tailleSessionMin + Math.random() * (tailleSessionMax - tailleSessionMin));
-
-                Vector<String> session = new Vector<String>();
-                for(int j=0; j<tailleSession; j++)
-                    session.add("Doc"+(int) Math.floor( Math.random() * nbDocs));
-
-                System.out.print(i+"/"+nbSessions+"> Ajout "+session+" à user"+user+"...");
-                isOk = dao.addSession("User"+user, session);
-                System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
-            }
-
-
-            System.out.println();
-
-
-            System.out.print("Passage à "+nbGroups+" groupes...");
-            dao.changeNumberOfGroup(nbGroups);
-            System.out.println(" DONE");
-
-
-            System.out.println();
+        //Users
+        for(int i=0; i<nbUsers; i++){
+            System.out.print(i+"/"+nbUsers+"> Ajout User"+i+"...");
+            isOk = dao.addUserIfNotPresent("User"+i);
+            System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         }
+
+
+        System.out.println();
+
+
+        //Catégories
+        for(int i=0; i<nbCategories; i++){
+            System.out.print(i+"/"+nbCategories+"> Ajout catégorie Cat"+i+"...");
+            isOk = dao.addCategorie("Cat"+i);
+            System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà présente)");
+        }
+
+
+        System.out.println();
+
+
+        //Documents
+        for(int i=0; i<nbDocs; i++){
+            int categorie = (int)Math.floor(Math.random() * nbCategories);
+            System.out.print(i+"/"+nbDocs+"> Ajout document \"Doc"+i+"\" [Cat"+categorie+"]...");
+            isOk = dao.addDocument("Doc"+i, "Cat"+categorie);
+            System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
+        }
+
+
+        System.out.println();
+
+
         //Sessions
-        for(int i=0; i<20; i++){
+        for(int i=0; i<nbSessions; i++){
             int user = (int) Math.floor(Math.random() * nbUsers);
             int tailleSession = (int) Math.floor( tailleSessionMin + Math.random() * (tailleSessionMax - tailleSessionMin));
 
@@ -427,25 +427,27 @@ public class testDAO {
             System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
         }
 
-        System.out.println("Avant:");
-        System.out.println(dao.getUsersGroups());
 
+        System.out.println();
+
+
+        System.out.print("Passage à "+nbGroups+" groupes...");
+        dao.changeNumberOfGroup(nbGroups);
+        System.out.println(" DONE");
+
+
+        System.out.println();
+
+
+        System.out.println("Execution du K-MEANS");
         dao.recompute();
-
-        System.out.println("Après:");
-        System.out.println(dao.getUsersGroups());
-
-
+        System.out.println("DONE");
     }
     public static void main(String[] args){
         dao = new DAO();
         if(!dao.isConnected())
             return;
 
-        //test();
-        //testRandom(false);
-        //testRandom(true);
         console();
-
     }
 }
