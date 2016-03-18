@@ -35,13 +35,14 @@ public class testDAO {
                     System.out.println("     HELP => Afficher l'aide");
                     System.out.println("     LIST DOC/CAT/USER => Lister les documents, catégories, utilisateurs");
                     System.out.println("     ADD DOC/CAT/USER/SESSION => Ajouter des documents, catégories, utilisateurs, sessions");
+                    System.out.println("     GUESS => Faire une demande de prédiction");
                     System.out.println("     CHGRP <nombre> => Changer le nombre de groupes");
                     System.out.println("     TEST => Lancer un environnement de test");
                     System.out.println("     UNIT => Lancer un environnement de test unitaire");
                     System.out.println("     CONNECT <user> => Connexion");
                     System.out.println("     KMEANS => Effectuer un K-Means");
                     System.out.println("     DISCONNECT <user> => Déconnexion");
-                    System.out.println("     CLEAR => Effacer la base de donnée");
+                    System.out.println("     CLEARDB => Effacer la base de donnée");
                     System.out.println("     C => Effacer l'écran");
                     System.out.println("     EXIT => Quitter");
                 } else if (instruction.equals("UNIT")){//OK
@@ -50,6 +51,38 @@ public class testDAO {
                 } else if (instruction.equals("TEST")){//OK
                     System.out.println("   Lancement du test...:");
                     testRandom();
+                } else if (instruction.equals("GUESS")){//OK
+                    if(userConnected.equals("")){
+                        System.out.println("   Connectez vous avant de faire une demande prédiction");
+                    } else {
+                        int i=0;
+                        Vector<String> session = new Vector<String>();
+                        String doc="";
+                        System.out.println("   Rentrez les noms des documents. Valider='.' et quitter='x' ");
+                        while(!doc.equals(".") && !doc.equals("x")){
+                            System.out.print("   Rentrez le nom du document #"+i+": ");
+                            doc = in.nextLine();
+                            if(!doc.equals(".") && !doc.equals("x")){
+                                if(dao.docExists(doc)){
+                                    session.add(doc);
+                                    i++;
+                                } else {
+                                    System.out.println("     Le document \""+doc+"\" n'existe pas ");
+                                }
+                            }
+                        }
+                        if(doc.equals(".")){
+                            Vector<HashMap<String, Double>> results = dao.guessNextDocs(userConnected, session);
+                            System.out.println("   Resultats:");
+                            for(int k=0; k<results.size(); k++){
+                                System.out.println("     Markov d'ordre "+(k+1));
+                                for(Map.Entry<String, Double> ent : results.get(k).entrySet())
+                                    System.out.println("       \""+ent.getKey()+"\" ["+ent.getValue()+"] ");
+                            }
+                        } else if(doc.equals("x")){
+                            System.out.println("   Prediction annulée");
+                        }
+                    }
                 } else if (instruction.equals("ADD")){//OK
                     if(line.length > 1){
                         String type = line[1].toUpperCase();
@@ -172,7 +205,7 @@ public class testDAO {
                     } else {
                         System.out.println("   Type manquant (DOC, CAT, USER)");
                     }
-                } else if (instruction.equals("CLEAR")){//OK
+                } else if (instruction.equals("CLEARDB")){//OK
                     if(userConnected.equals("")){
                         dao.clearDB();
                         System.out.println("   Effacement OK");
