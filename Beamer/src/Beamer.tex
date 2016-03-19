@@ -46,7 +46,7 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Chaîne de Markov}
-                Qu'est-ce que sont les chaînes de Markov?
+                Que sont les chaînes de Markov?
                 \pause
                 \begin{block}{Description}
                     Graphe orienté dont les arêtes porte la probabilité de passage d'un nœud (=Ensemble d'états) à un autre.
@@ -167,7 +167,7 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Union de Markov}
-                Une autre possibilité gardant les probabilités. \pause[5] \textbf{Plus claire, mais moins efficace}
+                Une autre possibilité gardant les probabilités. \pause[5] \textbf{Plus clair, mais moins efficace}
                 \pause[2]
                 \begin{columns}[t]
                     \begin{column}{3cm}
@@ -205,7 +205,7 @@
                     \pause
                     \item Réunir les utilisateurs \textbf{proches} en terme d'intérêt
                     \pause
-                    \item Nécessité d'une distance à minimiser.
+                    \item Définir une position "d'intérêt utilisateur"
                 \end{itemize}
             \end{frame}
             \begin{frame}
@@ -242,6 +242,8 @@
                                 \pause
                                 \item Facile à calculer
                                 \pause
+                                \item Pas de stockage de sessions
+                                \pause
                                 \item Taille fixe
                             \end{itemize}
                             \pause
@@ -256,7 +258,7 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Groupement d'utilisateur}
-                Une fois les positions obtenues, comment grouper les utilisateurs?
+                \only<-4,6-7>{Une fois les positions obtenues, comment grouper les utilisateurs?}
                 \pause[2]
                 \only<-4,6-7>{
                     \begin{block}{Techniques de partitionnement}
@@ -329,6 +331,8 @@
                 \begin{itemize}
                     \item Comment stocker efficacement l'ensemble des données du programme?
                     \pause
+                    \item Comment récupérer des données sans avoir à tout charger en mémoire?
+                    \pause
                     \item Comment visualiser de manière plus intuitive les données?
                 \end{itemize}
             \end{frame}
@@ -338,7 +342,7 @@
                 \pause
                 \begin{columns}[t]
                     \begin{column}{4cm}
-                        \begin{block}{SGDB}
+                        \begin{block}{SGBD}
                             \pause
                             Avantages
                             \begin{itemize}
@@ -381,8 +385,8 @@
                 \end{columns}
             \end{frame}
             \begin{frame}
-                \frametitle{Choix du SGDB}
-                Deux types de SGDB:
+                \frametitle{Choix du SGBD}
+                Deux types de SGBD:
                 \pause
                 \begin{itemize}
                     \item SQL (MySQL, PostgreSQL, ...)
@@ -405,11 +409,11 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Neo4j}
-                Qu'est-ce que Neo4j?
+                \only<-5,7>{Qu'est-ce que Neo4j?}
                 \pause[2]
                 \only<-5,7>{
                     \begin{block}{Description}
-                        SGDB NOSQL open-source orienté graphe codé en Java depuis 2000.
+                        SGBD NOSQL open-source Java orienté graphe développé depuis 2000.
                     \end{block}
                 }
                 \pause[3]
@@ -444,25 +448,38 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Implémentation}
-                \only<-7>{
-                    Spécificités:
-                    \begin{itemize}
-                        \pause[2]
-                    \item Langage: \pause[3] Java
-                        \pause[4]
-                        \item Stockage: \pause[5] Neo4j
-                        \pause[6]
-                        \item Utilisation: \pause[7] Invite de commandes/Librairie 
-                    \end{itemize}
-                    \pause[8]
-                }
-                \only<8>{
-                    \begin{block}{Modèle}
-                        \begin{center}
-                            \includegraphics[scale=0.2]{graph/modeleNeo4j.png}
-                        \end{center}
-                    \end{block}
-                }
+                Spécificités:
+                \begin{itemize}
+                    \pause
+                \item Langage: \pause Java
+                    \pause
+                    \item Stockage: \pause Neo4j
+                    \pause
+                    \item Utilisation: \pause Invite de commandes/Librairie 
+                    \pause
+                    \item Petits ajouts:
+                    \pause
+                        \begin{itemize}
+                            \item Durée de vie sessions
+                            \pause
+                            \item Pourcentage minimum vecteur utilisateur
+                        \end{itemize}
+                \end{itemize}
+                \pause
+            \end{frame}
+            \begin{frame}
+                \frametitle{Modèle}
+                \begin{block}{Diagramme}
+                    \begin{center}
+                        \includegraphics[scale=0.2]{graph/modeleNeo4j.png}
+                    \end{center}
+                \end{block}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Démonstration}
+                \begin{center}
+                    Démonstration
+                \end{center}
             \end{frame}
 
     \section{Conclusion}
