@@ -121,32 +121,50 @@ public class DAO {
         }
 
         link(user, groupMin);
-        calculVectorGroupe(groupMin);
     }
 
     //K-means
     public void initialise(){
         List<String> users = getUserNames();
-        int max = getNbGroup();
+        List<String> userscp = new ArrayList<String>(users);
+        HashMap<String, Vector<Double>> userVector = getVector("User");
+        int nbGroups = getNbGroup();
+        int nbCat = getNbCategories();
+
+        for(int i=0; i<nbGroups; i++){
+            if(userscp.size() > 0){
+                int rand = (int)Math.floor(Math.random()*userscp.size());
+                String user = userscp.get(rand);
+                userscp.remove(rand);
+                setVectorGroupe("Group"+i, userVector.get(user));
+            } else {
+                List<Double> vect = new ArrayList<Double>();
+                double tot=0;
+                for(int j=0; j<nbCat; j++){
+                    double rand = Math.random();
+                    vect.add(rand);
+                    tot+=rand;
+                }
+                for(int j=0; j<nbCat; j++)
+                    vect.set(j, vect.get(j)/tot);
+                setVectorGroupe("Group"+i, vect);
+            }
+        }
+
+
         int i=0;
         for(String user : users){
             link(user, "Group"+i);
-            i=(i+1)%max;
+            i=(i+1)%nbGroups;
         }
-        calculVectorGroupes();
     }
     public void recompute(){
+        initialise();
+
         HashMap<String, Vector<Double>> userVector = getVector("User");
         HashMap<String, Vector<Double>> groupVector = getVector("Group");
         HashMap<String, String> usersGroups = getUsersGroups();
         HashMap<String, Integer> nbUsersInGroups = getNbUsersInGroups();
-
-        //for(String group : groupVector.keySet()){
-            //int nbCat = groupVector.get(group).size();
-            //double userRand = Math.random() * userVector.keySet().size();
-            //for(int i=0; i<nbCat; i++)
-                //groupVector.get(group).set(i, );
-        //}
 
         boolean hasChanged = true;
 
@@ -571,6 +589,19 @@ public class DAO {
             System.out.println(e);
         }
     }
+        private void setVectorGroupe(String group, List<Double> vector){
+            String query = "MATCH (g:Group {name:\""+group+"\"}) SET g.vector = [";
+            if(vector.size() > 0){
+                query += vector.get(0);
+                for(int i=1; i<vector.size(); i++)
+                    query += ", "+vector.get(i);
+            }
+            query += "]";
+            try(ResultSet set = connect.createStatement().executeQuery(query)){
+            } catch(Exception e){
+                System.out.println(e);
+            }
+        }
         private void calculVectorGroupe(String group){
             int nbCategories = getNbCategories();
 
