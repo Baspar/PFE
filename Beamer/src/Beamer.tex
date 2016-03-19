@@ -1,0 +1,118 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usetheme{Berlin}
+%\usepackage{ressource}
+
+\title{Représentation probabiliste d’un parcours de navigation dans un corpus documentaire}
+\subtitle{Soutenance PFE}
+\author{LAINE Bastien}
+\institute{Génie Mathématique | INSA Rouen}
+
+\begin{document}
+    \begin{frame}
+        \titlepage{}
+    \end{frame}
+
+    \section*{Sommaire}
+
+    \begin{frame}
+        \tableofcontents[hideallsubsections]
+    \end{frame}
+
+    \section{Introduction}
+        \begin{frame}
+        \end{frame}
+
+    \section{État de l'art}
+        \subsection{État de l'art}
+            \begin{frame}
+            \end{frame}
+
+    \section{Versions}
+        \subsection{v1 - POC}
+            \begin{frame}
+                \frametitle{Problématiques}
+                Version "Proof Of Concept"
+                \begin{itemize}
+                    \pause
+                    \item Comment modéliser les parcours d'un utilisateur?
+                    \pause
+                    \item Comment prédire les documents suivants?
+                \end{itemize}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Chaîne de Markov}
+                \begin{block}{Description}
+                    Graphe orienté dont les arêtes porte la probabilité de passage d'un nœud à un autre.
+                \end{block}
+                \pause
+                \begin{block}{Markov appliqué aux documents}
+                    Dans notre cas:
+                    \begin{itemize}
+                        \item Les \textbf{séquences de documents} représentent les \textbf{nœuds}.
+                        \item Les \textbf{probabilités de séquence suivante} représentent les \textbf{arêtes}.
+                    \end{itemize}
+                \end{block}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Exemples de chaîne de Markov}
+                \pause
+                \begin{exampleblock}{Markov d'ordre 1}
+                    \begin{center}
+                        \includegraphics[scale=0.5]{graph/Markov1.png}
+                    \end{center}
+                \end{exampleblock}
+                \pause
+                \begin{exampleblock}{Markov d'ordre 3}
+                    \begin{center}
+                        \includegraphics[scale=0.3]{graph/Markov3.png}
+                    \end{center}
+                \end{exampleblock}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Quelle(s) chaîne(s) considérer?}
+                \begin{itemize}
+                    \pause[2]
+                    \item Combien de Markov? \pause[3] $\Rightarrow$ \textbf{All-k}$^{th}$\textbf{-Markov}
+                    \pause[4]
+                    \item Ordre de Markov maximal? \pause[6] $\Rightarrow$ \textbf{Ordre 4}
+                    \pause[5]
+                \end{itemize}
+                \begin{exampleblock}{NLP}
+                    \begin{center}
+                        \includegraphics[scale=0.35]{graph/NLP.png}
+                    \end{center}
+                \end{exampleblock}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Implémentation}
+                \begin{itemize}
+                    \pause
+                    \item Langage  \pause $\Rightarrow$ C++
+                    \pause
+                    \item Stockage \pause $\Rightarrow$ Manuel
+                \end{itemize}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Implémentation}
+                \pause
+                \begin{block}{Diagramme de classes}
+                    \begin{center}
+                        \includegraphics[scale=0.2]{graph/v1class.png}
+                    \end{center}
+                \end{block}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Implémentation}
+                \begin{block}{Diagramme de classes}
+                    \begin{center}
+                        \includegraphics[scale=0.5]{graph/v1classneat.png}
+                    \end{center}
+                \end{block}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Démonstration}
+            \end{frame}
+        \subsection{v2 Groupement}
+        \subsection{v3 Stockage}
+\end{document}

@@ -1,0 +1,56 @@
+@startuml
+    !include skin
+    class User{
+        ==<b>Attributs</b>==
+            +myMarkovs : AllKthMarkov
+    }
+    class AllKthMarkov{
+        ==<b>Attributs</b>==
+            -K : int
+            -markovs : vector<KthMarkov>
+        ==<b>Constructeurs</b>==
+            +AllKthMarkov(string fileName)
+        ==<b>Getters</b>==
+            +getMarkov(int i) : KthMarkov*
+        ==<b>Methodes</b>==
+            -ajouterDocs(int K,vector<int> docs,int nextDoc) : void
+            +ajouterSession(vector<int> session) : void
+            +guessNextDocs(vector<int> session) : vector<vector<pair<int,float>>>
+    }
+class MarkovNode{
+    ==<b>Attributs</b>==
+        -child : map<MarkovNode*,int>
+        -maChaineDoc : vector<int>
+        -total : int
+    ==<b>Constructeurs</b>==
+        +MarkovNode()
+        +MarkovNode(const vector<int> chaine)
+    ==<b>Setters</b>==
+        +setChild(MarkovNode* markovNode,int nb) : void
+        +setTotal(int tot) : void
+    ==<b>Getters</b>==
+        +getMaChaineDoc() : vector<int>
+        +getNbChild() : int
+        +getTotal() : int
+        +map<MarkovNode*,int> getChild() : map<MarkovNode*,int>
+    ==<b>Methodes</b>==
+        +addChild(MarkovNode* markovNode,int poids) : void
+        +guessNextDocs() : vector<pair<int,float>>
+        +renforcerChaine(MarkovNode* nextChaine) : void
+}
+class KthMarkov{
+    ==<b>Attributs</b>==
+        -nodes : map<vector<int> ,MarkovNode>
+    ==<b>Getters</b>==
+        +getPDocs(vector<int> docs) : MarkovNode*
+    ==<b>Methodes</b>==
+        +addNewNode(vector<int> node,int poidsNode) : void
+        +renforcerChaine(vector<int> oldDocs,int nextDoc) : void
+        +toSave() : string
+        +toUML() : string
+}
+AllKthMarkov "1" -o "1" User
+AllKthMarkov "1" o-- "4" KthMarkov
+KthMarkov "1" o- "*" MarkovNode
+MarkovNode "1" *- "*" MarkovNode
+@enduml
