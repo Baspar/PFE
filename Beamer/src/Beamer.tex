@@ -1,5 +1,7 @@
 \documentclass{beamer}
 \usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{fancyvrb}
 \usetheme{Berlin}
 %\usepackage{ressource}
 \setbeamerfont{caption}{size=\footnotesize}
@@ -10,18 +12,19 @@
 \institute{Génie Mathématique | INSA Rouen}
 
 \begin{document}
+    \beamertemplatenavigationsymbolsempty
     \begin{frame}
         \titlepage{}
     \end{frame}
 
     \section*{Sommaire}
-
-    \begin{frame}
-        \tableofcontents[hideallsubsections]
-    \end{frame}
+        \begin{frame}
+            \tableofcontents
+        \end{frame}
 
     \section{Introduction}
         \begin{frame}
+            \frametitle{Présentation du projet}
         \end{frame}
 
     \section{État de l'art}
@@ -49,7 +52,7 @@
                     Graphe orienté dont les arêtes porte la probabilité de passage d'un nœud (=Ensemble d'états) à un autre.
                 \end{block}
                 \pause
-                \begin{block}{Markov appliqué aux documents}
+                \begin{block}{Les chaînes Markov appliquées aux documents}
                     Dans notre cas:
                     \begin{itemize}
                         \item Les \textbf{séquences de documents} représentent les \textbf{nœuds}.
@@ -60,13 +63,13 @@
             \begin{frame}
                 \frametitle{Exemples de chaîne de Markov}
                 \pause
-                \begin{exampleblock}{Markov d'ordre 1}
+                \begin{exampleblock}{Chaîne de Markov d'ordre 1}
                     \begin{center}
                         \includegraphics[scale=0.5]{graph/Markov1.png}
                     \end{center}
                 \end{exampleblock}
                 \pause
-                \begin{exampleblock}{Markov d'ordre 3}
+                \begin{exampleblock}{Chaîne de Markov d'ordre 3}
                     \begin{center}
                         \includegraphics[scale=0.3]{graph/Markov3.png}
                     \end{center}
@@ -74,12 +77,12 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Quelle(s) chaîne(s) considérer?}
-                Quelles sont les limites qu'il faut s'imposer?
+                Quelles sont les limites?
                 \begin{itemize}
                     \pause[2]
-                    \item Combien de Markov? \pause[3] $\Rightarrow$ \textbf{All-k}$^{th}$\textbf{-Markov}
+                    \item Combien de chaînes de Markov? \pause[3] $\Rightarrow$ \textbf{All-k}$^{th}$\textbf{-Markov}
                     \pause[4]
-                    \item Ordre de Markov maximal? \pause[6] $\Rightarrow$ \textbf{Ordre 4}
+                    \item Ordre de chaîne de Markov maximal? \pause[6] $\Rightarrow$ \textbf{Ordre 4}
                     \pause[5]
                 \end{itemize}
                 \begin{exampleblock}{NLP}
@@ -116,7 +119,7 @@
                     Démonstration
                 \end{center}
             \end{frame}
-        \subsection{v2 Multi-Utilisateur}
+        \subsection{v2 - Multi-Utilisateur}
             \begin{frame}
                 \frametitle{Problématiques}
                 Version Multi-Utilisateur
@@ -209,7 +212,7 @@
                 \frametitle{Groupement d'utilisateur}
                 Comment obtenir une distance/position d'intérêt?
                 \pause
-                \begin{columns}
+                \begin{columns}[t]
                     \begin{column}{4cm}
                         \begin{block}{Vecteur session moyen}
                             \pause
@@ -255,8 +258,8 @@
                 \frametitle{Groupement d'utilisateur}
                 Une fois les positions obtenues, comment grouper les utilisateurs?
                 \pause[2]
-                \begin{block}{\alt<1-4,6-7>{Techniques de partitionnement}{\alt<5>{Classification ascendante/descendante hiérarchique}{K-Means}}}
-                    \only<-4,6-7>{\visible<2->{
+                \only<-4,6-7>{
+                    \begin{block}{Techniques de partitionnement}
                         \begin{itemize}
                             \pause[3]
                             \item Classification ascendante hiérarchique
@@ -268,21 +271,25 @@
                             \item K-Moyennes (K-Means)
                             \pause[8]
                         \end{itemize}
-                    }}
-                    \only<5>{
+                    \end{block}
+                }
+                \only<5>{
+                    \begin{exampleblock}{Classification ascendante/descendante hiérarchique}
                         \begin{center}
                             \includegraphics[scale=0.3]{graph/hierachiqueOrder.png}
                         \end{center}
                         \pause[6]
-                    }
-                    \only<8>{
+                    \end{exampleblock}
+                }
+                \only<8>{
+                    \begin{exampleblock}{K-Means}
                         \begin{figure}[h]
                             \centering
                             \includegraphics[scale=0.3]{images/kmeans.png}
                             \caption{Source: codeproject.com}
                         \end{figure}
-                    }
-                \end{block}
+                    \end{exampleblock}
+                }
             \end{frame}
             \begin{frame}
                 \frametitle{Implémentation}
@@ -314,7 +321,7 @@
                     \end{block}
                 }
             \end{frame}
-        \subsection{v3 Stockage}
+        \subsection{v3 - Stockage}
             \begin{frame}
                 \frametitle{Problématiques}
                 Version Stockage 
@@ -329,12 +336,133 @@
                 \frametitle{Différentes solutions de stockage}
                 Deux grandes solutions:
                 \pause
-                \begin{columns}
+                \begin{columns}[t]
                     \begin{column}{4cm}
-                        \begin{block}{}
+                        \begin{block}{SGDB}
+                            \pause
+                            Avantages
+                            \begin{itemize}
+                                \pause
+                                \item Vitesse d'accès
+                                \pause
+                                \item Sécurité
+                            \end{itemize}
+                            \pause
+                            Inconvénients 
+                            \begin{itemize}
+                                \pause
+                                \item Complexité de prise en main
+                                \pause
+                                \item Nouvelle phase de conception
+                            \end{itemize}
+                        \end{block}
+                    \end{column}
+                    \pause
+                    \begin{column}{4cm}
+                        \begin{block}{Fichier}
+                            \pause
+                            Avantages
+                            \begin{itemize}
+                                \pause
+                                \item Peu de modifications
+                                \pause
+                                \item Facile d'accès
+                            \end{itemize}
+                            \pause
+                            Inconvénients 
+                            \begin{itemize}
+                                \pause
+                                \item Chargement intégral des objets
+                                \pause
+                                \item "Bidouillage"
+                            \end{itemize}
                         \end{block}
                     \end{column}
                 \end{columns}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Choix du SGDB}
+                Deux types de SGDB:
+                \pause
+                \begin{itemize}
+                    \item SQL (MySQL, PostgreSQL, ...)
+                    \pause
+                    \item NOSQL (Cassandra, MongoDB, ...)
+                \end{itemize}
+                \pause
+                \begin{block}{NOSQL (Not Only SQL)}
+                    \pause
+                    \begin{itemize}
+                        \item Clef/Valeur (Riak)
+                        \pause
+                        \item Orienté colonne (Cassandra)
+                        \pause
+                        \item Orienté document (MongoDB)
+                        \pause
+                        \item \textbf{Orienté graphe (Neo4j)}
+                    \end{itemize}
+                \end{block}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Neo4j}
+                Qu'est-ce que Neo4j?
+                \pause[2]
+                \only<-5,7>{
+                    \begin{block}{Description}
+                        SGDB NOSQL open-source orienté graphe codé en Java depuis 2000.
+                    \end{block}
+                }
+                \pause[3]
+                \only<-5,7>{
+                    \begin{block}{Caractéristiques}
+                        \pause[4]
+                        \begin{itemize}
+                            \item Nombreux connecteurs (Java, Ruby, R, ...)
+                            \pause[5]
+                            \item Langage synthétique (Cypher)
+                            \pause[6]
+                            \item Interface Web incluse
+                            \pause[8]
+                        \end{itemize}
+                    \end{block}
+                }
+                \only<6>{
+                    \begin{exampleblock}{Cypher}
+                        \begin{center}
+                            \includegraphics[scale=0.2]{images/cypher.png}
+                        \end{center}
+                    \end{exampleblock}
+                    \pause[7]
+                }
+                \only<8>{
+                    \begin{exampleblock}{Interface Web}
+                        \begin{center}
+                            \includegraphics[scale=0.1]{images/neo4jbrowser.png}
+                        \end{center}
+                    \end{exampleblock}
+                }
+            \end{frame}
+            \begin{frame}
+                \frametitle{Implémentation}
+                \only<-7>{
+                    Spécificités:
+                    \begin{itemize}
+                        \pause[2]
+                    \item Langage: \pause[3] Java
+                        \pause[4]
+                        \item Stockage: \pause[5] Neo4j
+                        \pause[6]
+                        \item Utilisation: \pause[7] Invite de commandes/Librairie 
+                    \end{itemize}
+                    \pause[8]
+                }
+                \only<8>{
+                    \begin{block}{Modèle}
+                        \begin{center}
+                            \includegraphics[scale=0.2]{graph/modeleNeo4j.png}
+                        \end{center}
+                    \end{block}
+                }
             \end{frame}
 
     \section{Conclusion}

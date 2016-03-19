@@ -1,10 +1,78 @@
 @startuml
-    !include skin
-    (des) -up-> (légumes) :0.5
-    (des) -down-> (voitures) :0.5
-    (mange) -down-> (des) :1
-    (conduis) -up-> (des) :1
-    (Je) -up-> (mange) :0.5
-    (Je) -down-> (conduis) :0.5
+skinparam backgroundcolor transparent
+skinparam shadowing false
+skinparam usecase {
+    BorderColor black
+}
+
+note "NEXT\n==\n<b>int[]</b> fins" as n2
+
+usecase User #pink as "<b>User</b>
+==
+<b>string</b> name
+<b>double[]</b> userVector
+<b>int</b> nbSessions"
+usecase Group #grey as "<b>Group</b>
+==
+<b>string</b> name
+<b>double[]</b> groupVector"
+usecase Categorie #red as "<b>Categorie</b>
+==
+<b>string</b> name
+"
+usecase Doc #yellow as "<b>Doc</b>
+==
+<b>string</b> name
+<b>int</b> id"
+
+usecase m1_1 #blue as "<b>m1</b>
+==
+<b>string[]</b> docs"
+usecase m1_2 #blue as "<b>m1</b>
+==
+<b>string[]</b> docs"
+
+usecase m2_1 #green as "<b>m2</b>
+==
+<b>string[]</b> docs"
+usecase m2_2 #green as "<b>m2</b>
+==
+<b>string[]</b> docs"
+
+usecase m3_1 #yellow as "<b>m3</b>
+==
+<b>string[]</b> docs"
+usecase m3_2 #yellow as "<b>m3</b>
+==
+<b>string[]</b> docs"
+usecase m4_1 #red as "<b>m4</b>
+==
+<b>string[]</b> docs"
+usecase m4_2 #red as "<b>m4</b>
+==
+<b>string[]</b> docs"
+
+
+
+(m1_1) <-down- (User) : HAS
+(m1_2) <- (User) : HAS
+(User) -up-> (m2_2) : HAS
+(User) -up-> (m2_1) : HAS
+(User) -down-> (m3_1) : HAS
+(User) -> (m3_2) : HAS
+(User) -up-> (m4_1) : HAS
+(User) -up-> (m4_2) : HAS
+
+
+(m1_1) -up-> (m1_2) : NEXT
+(m2_1) - n2
+n2 -> (m2_2)
+(m3_2) -down-> (m3_1) : NEXT
+(m4_1) <- (m4_2) : NEXT
+
+
+
+(Categorie) <-- (Doc) : HASCATEGORIE
+(User) <-- (Group) : CONTAINS
 
 @enduml
