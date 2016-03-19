@@ -1,0 +1,10 @@
+@startuml
+    !include skin
+    (des) -up-> (légumes) :0.5
+    (des) -down-> (voitures) :0.5
+    (mange) -down-> (des) :1
+    (conduis) -up-> (des) :1
+    (Je) -up-> (mange) :0.5
+    (Je) -down-> (conduis) :0.5
+
+@enduml
