@@ -1,8 +1,10 @@
 KMeans *-- Group
 KMeans o-- User
-Group o-- User
-Documents *-- Document
-User *-- AllKthMarkov
-AllKthMarkov *-- KthMarkov
-KthMarkov *-- MarkovNode
+Group *- User
+Documents o-- Document
+User o-- AllKthMarkov
+KthMarkov -o AllKthMarkov
+KthMarkov o-up- MarkovNode
 MarkovNode *-- MarkovNode
+Main o-- KMeans
+Main o-- Documents
