@@ -1,3 +1,4 @@
-AllKthMarkov o-- KthMarkov
-KthMarkov o-- MarkovNode
-MarkovNode *- MarkovNode
+AllKthMarkov "1" -o "1" User 
+AllKthMarkov "1" o-- "4" KthMarkov
+KthMarkov "1" o- "*" MarkovNode
+MarkovNode "1" *- "*" MarkovNode
