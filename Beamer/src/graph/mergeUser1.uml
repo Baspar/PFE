@@ -1,0 +1,8 @@
+@startuml
+    !include skin
+    (Doc1[3]) --> (Doc2[2]) : 2
+    (Doc1[3]) --> (Doc4[0]) : 1
+    (Doc2[2]) --> (Doc3[4]) : 2
+    (Doc3[4]) --> (Doc4[0]) : 1
+    (Doc1[3]) <-- (Doc3[4]) : 3
+@enduml
