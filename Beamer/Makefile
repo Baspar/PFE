@@ -10,7 +10,7 @@ all: $(PNG) doc/Beamer.pdf pseudoclean
 	java -jar src/graph/plantuml.jar $<
 
 doc/Beamer.pdf: src/Beamer.tex
-	cd src; pdflatex Beamer.tex;pdflatex Beamer.tex && mv Beamer.pdf ../doc; cd ..
+	cd src;pdflatex Beamer.tex && pdflatex Beamer.tex && mv Beamer.pdf ../doc; cd ..
 
 cleangraph:
 	rm -rf src/graph/*.png
