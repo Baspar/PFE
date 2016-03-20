@@ -387,8 +387,8 @@ public class testDAO {
     }
     private static void testRandom(){
         int nbUsers = 10;
-        int nbCategories = 20;
-        int nbDocs = 50;
+        int nbCategories = 5;
+        int nbDocs = 10;
         int nbSessions = 50;
         int nbGroups = 4;
         int tailleSessionMin = 3;
