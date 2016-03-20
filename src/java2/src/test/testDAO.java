@@ -141,7 +141,7 @@ public class testDAO {
                             if(dao.getNbGroup() > 0){
                                 System.out.print("   Choisissez le nom d'utilisateur: ");
                                 user = in.nextLine();
-                                if(dao.addUserIfNotPresent(user)==0){
+                                if(dao.addUser(user)==0){
                                     System.out.println("   Succès de l'ajout d'utilisateur");
                                 }else{
                                     System.out.println("   Un utilisateur portant ce nom existe déjà)");
@@ -159,7 +159,7 @@ public class testDAO {
                     for(int i=0; i<200; i++)
                         System.out.println();
                 } else if (instruction.equals("KMEANS")){//OK
-                    dao.recompute();
+                    dao.recomputeKMeans();
                 } else if (instruction.equals("CHGRP")){//OK
                     if(line.length > 1){
                         int nb = Integer.parseInt(line[1]);
@@ -237,34 +237,34 @@ public class testDAO {
 
 
         System.out.print("Ajout User1...");
-        isOk = dao.addUserIfNotPresent("User1");
+        isOk = dao.addUser("User1");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User2...");
-        isOk = dao.addUserIfNotPresent("User2");
+        isOk = dao.addUser("User2");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User3...");
-        isOk = dao.addUserIfNotPresent("User3");
+        isOk = dao.addUser("User3");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User4...");
-        isOk = dao.addUserIfNotPresent("User4");
+        isOk = dao.addUser("User4");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User5...");
-        isOk = dao.addUserIfNotPresent("User5");
+        isOk = dao.addUser("User5");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User6...");
-        isOk = dao.addUserIfNotPresent("User6");
+        isOk = dao.addUser("User6");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User7...");
-        isOk = dao.addUserIfNotPresent("User7");
+        isOk = dao.addUser("User7");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User8...");
-        isOk = dao.addUserIfNotPresent("User8");
+        isOk = dao.addUser("User8");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User9...");
-        isOk = dao.addUserIfNotPresent("User9");
+        isOk = dao.addUser("User9");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         System.out.print("Ajout User9...");
-        isOk = dao.addUserIfNotPresent("User9");
+        isOk = dao.addUser("User9");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
 
 
@@ -381,9 +381,9 @@ public class testDAO {
         System.out.println(dao.guessNextDocs("User6", sessionTest));
         System.out.println("DONE");
 
-        dao.calculVectorGroupes();
+        //dao.calculVectorGroupes();
 
-        dao.recompute();
+        dao.recomputeKMeans();
     }
     private static void testRandom(){
         int nbUsers = 10;
@@ -415,7 +415,7 @@ public class testDAO {
         //Users
         for(int i=0; i<nbUsers; i++){
             System.out.print(i+"/"+nbUsers+"> Ajout User"+i+"...");
-            isOk = dao.addUserIfNotPresent("User"+i);
+            isOk = dao.addUser("User"+i);
             System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Utilisateur déjà présent)");
         }
 
@@ -473,7 +473,7 @@ public class testDAO {
 
 
         System.out.println("Execution du K-MEANS");
-        dao.recompute();
+        dao.recomputeKMeans();
         System.out.println("DONE");
     }
     public static void main(String[] args){
