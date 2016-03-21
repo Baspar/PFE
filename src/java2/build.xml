@@ -49,6 +49,11 @@
             <classpath refid="PFE2.classpath"/>
         </java>
     </target>
+    <target name="DAO (0)">
+        <java classname="DAOOther" failonerror="true" fork="yes">
+            <classpath refid="PFE2.classpath"/>
+        </java>
+    </target>
     <target name="DAO (1)">
         <java classname="DAO" failonerror="true" fork="yes">
             <classpath refid="PFE2.classpath"/>

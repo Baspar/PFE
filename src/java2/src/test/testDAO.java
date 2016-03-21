@@ -353,19 +353,19 @@ public class testDAO {
 
         System.out.print("Ajout session à user1...");
         isOk = dao.addSession("User1", session);
-        System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
         System.out.print("Ajout session2 à user6...");
         isOk = dao.addSession("User6", session2);
-        System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
         System.out.print("Ajout session1 à user1...");
         isOk = dao.addSession("User1", session1);
-        System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
         System.out.print("Ajout sessionBug à user1...");
         isOk = dao.addSession("User1", sessionBug);
-        System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
         System.out.print("Ajout session1 à userBug...");
         isOk = dao.addSession("UserBug", session1);
-        System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-2)+" -"+session.get(isOk-2)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
 
 
         System.out.println();
