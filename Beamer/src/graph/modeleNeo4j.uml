@@ -19,11 +19,11 @@ usecase Group #grey as "<b>Group</b>
 usecase Categorie #red as "<b>Categorie</b>
 ==
 <b>string</b> name
-"
+<b>int</b> id"
 usecase Doc #yellow as "<b>Doc</b>
 ==
 <b>string</b> name
-<b>int</b> id"
+"
 
 usecase m1_1 #blue as "<b>m1</b>
 ==
