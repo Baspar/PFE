@@ -44,13 +44,8 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="testDAO">
-        <java classname="test.testDAO" failonerror="true" fork="yes">
-            <classpath refid="PFE2.classpath"/>
-        </java>
-    </target>
-    <target name="DAO (0)">
-        <java classname="DAOOther" failonerror="true" fork="yes">
+    <target name="consoleDAO">
+        <java classname="test.consoleDAO" failonerror="true" fork="yes">
             <classpath refid="PFE2.classpath"/>
         </java>
     </target>

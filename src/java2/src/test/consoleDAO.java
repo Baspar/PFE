@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import dao.DAO;
 
-public class testDAO {
+public class consoleDAO {
     private static DAO dao;
     private static void console(){
         String instruction="";
@@ -279,73 +279,73 @@ public class testDAO {
         System.out.println();
 
 
-        System.out.print("Ajout catégorie Chasse...");
-        isOk = dao.addCategorie("Chasse");
+        System.out.print("Ajout catégorie Contes...");
+        isOk = dao.addCategorie("Contes");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà presente)");
-        System.out.print("Ajout catégorie Peche...");
-        isOk = dao.addCategorie("Peche");
+        System.out.print("Ajout catégorie Recits...");
+        isOk = dao.addCategorie("Recits");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà presente)");
-        System.out.print("Ajout catégorie Peche...");
-        isOk = dao.addCategorie("Peche");
+        System.out.print("Ajout catégorie Recits...");
+        isOk = dao.addCategorie("Recits");
         System.out.println(isOk==0?" DONE":" ERROR ["+isOk+"]  (Catégorie déjà presente)");
 
 
         System.out.println();
 
 
-        System.out.print("Ajout document \"Ma passion\"...");
-        isOk = dao.addDocument("Ma passion", "Peche");
+        System.out.print("Ajout document \"Germinal\"...");
+        isOk = dao.addDocument("Germinal", "Recits");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"Livre idiot\"...");
-        isOk = dao.addDocument("Livre idiot", "Peche");
+        System.out.print("Ajout document \"1984\"...");
+        isOk = dao.addDocument("1984", "Recits");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"Un chateau\"...");
-        isOk = dao.addDocument("Un chateau", "Chasse");
+        System.out.print("Ajout document \"Don Quichote\"...");
+        isOk = dao.addDocument("Don Quichote", "Contes");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"Un pied\"...");
-        isOk = dao.addDocument("Un pied", "Chasse");
+        System.out.print("Ajout document \"Hamlet\"...");
+        isOk = dao.addDocument("Hamlet", "Contes");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"14 Vaches\"...");
-        isOk = dao.addDocument("14 Vaches", "Chasse");
+        System.out.print("Ajout document \"Les fleurs du mal\"...");
+        isOk = dao.addDocument("Les fleurs du mal", "Contes");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"15 Vaches\"...");
-        isOk = dao.addDocument("15 Vaches", "AAA");
+        System.out.print("Ajout document \"1001 nuits\"...");
+        isOk = dao.addDocument("1001 nuits", "Categorie");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
-        System.out.print("Ajout document \"14 Vaches\"...");
-        isOk = dao.addDocument("14 Vaches", "Peche");
+        System.out.print("Ajout document \"Les fleurs du mal\"...");
+        isOk = dao.addDocument("Les fleurs du mal", "Recits");
         System.out.println(isOk==0?" DONE":isOk==1?" ERROR ["+isOk+"]  (Categorie inexistante)":" ERROR ["+isOk+"]  (Document deja present)");
 
         List<String> session = new ArrayList<String>();
-        session.add("Ma passion");
-        session.add("Livre idiot");
-        session.add("Un chateau");
-        session.add("Un pied");
-        session.add("14 Vaches");
+        session.add("Germinal");
+        session.add("1984");
+        session.add("Don Quichote");
+        session.add("Hamlet");
+        session.add("Les fleurs du mal");
 
         Vector<String> session2 = new Vector<String>();
-        session2.add("Un chateau");
-        session2.add("Livre idiot");
-        session2.add("Ma passion");
-        session2.add("Un pied");
-        session2.add("14 Vaches");
-        session2.add("Ma passion");
+        session2.add("Don Quichote");
+        session2.add("1984");
+        session2.add("Germinal");
+        session2.add("Hamlet");
+        session2.add("Les fleurs du mal");
+        session2.add("Germinal");
 
         List<String> session1 = new ArrayList<String>();
-        session1.add("Un chateau");
-        session1.add("Livre idiot");
-        session1.add("Ma passion");
-        session1.add("Un pied");
-        session1.add("14 Vaches");
-        session1.add("Un pied");
-        session1.add("Ma passion");
+        session1.add("Don Quichote");
+        session1.add("1984");
+        session1.add("Germinal");
+        session1.add("Hamlet");
+        session1.add("Les fleurs du mal");
+        session1.add("Hamlet");
+        session1.add("Germinal");
 
 
         List<String> sessionBug = new ArrayList<String>();
-        sessionBug.add("Un chateau");
-        sessionBug.add("Livre idiot");
-        sessionBug.add("Ma passion");
-        sessionBug.add("Un pied");
-        sessionBug.add("16 Vaches");
+        sessionBug.add("Don Quichote");
+        sessionBug.add("1984");
+        sessionBug.add("Germinal");
+        sessionBug.add("Hamlet");
+        sessionBug.add("1001 nuits");
 
 
         System.out.println();
@@ -353,35 +353,33 @@ public class testDAO {
 
         System.out.print("Ajout session à user1...");
         isOk = dao.addSession("User1", session);
-        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk)+" -"+session.get(isOk)+"- inexistant)");
         System.out.print("Ajout session2 à user6...");
         isOk = dao.addSession("User6", session2);
-        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk)+" -"+session2.get(isOk)+"- inexistant)");
         System.out.print("Ajout session1 à user1...");
         isOk = dao.addSession("User1", session1);
-        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk)+" -"+session1.get(isOk)+"- inexistant)");
         System.out.print("Ajout sessionBug à user1...");
         isOk = dao.addSession("User1", sessionBug);
-        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk)+" -"+sessionBug.get(isOk)+"- inexistant)");
         System.out.print("Ajout session1 à userBug...");
         isOk = dao.addSession("UserBug", session1);
-        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk-1)+" -"+session.get(isOk-1)+"- inexistant)");
+        System.out.println(isOk==0?" DONE":isOk==-1?" ERROR ["+isOk+"]  (Utilisateur inexistant)":" ERROR ["+isOk+"]  (Document #"+(isOk)+" -"+session1.get(isOk)+"- inexistant)");
 
 
         System.out.println();
 
 
         Vector<String> sessionTest = new Vector<String>();
-        sessionTest.add("Un chateau");
-        sessionTest.add("Livre idiot");
-        sessionTest.add("Ma passion");
-        sessionTest.add("Un pied");
+        sessionTest.add("Don Quichote");
+        sessionTest.add("1984");
+        sessionTest.add("Germinal");
+        sessionTest.add("Hamlet");
 
         System.out.println("Debut requete...");
         System.out.println(dao.guessNextDocs("User6", sessionTest));
         System.out.println("DONE");
-
-        //dao.calculVectorGroupes();
 
         dao.recomputeKMeans();
     }
