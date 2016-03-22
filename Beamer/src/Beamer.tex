@@ -18,21 +18,27 @@
         \titlepage{}
     \end{frame}
 
-    \section*{Sommaire}
-        \begin{frame}
-            \tableofcontents
-        \end{frame}
+    \begin{frame}
+        \frametitle{Sommaire}
+        \tableofcontents[hidesubsections]
+    \end{frame}
+
 
     \section{Introduction}
+        \begin{frame}
+            \frametitle{Sommaire}
+            \tableofcontents[currentsection, hideothersubsections]
+        \end{frame}
         \subsection{}
             \begin{frame}
                 \frametitle{Présentation du projet}
-                \begin{center}
-                    \includegraphics[scale=0.4]{images/overwhelmed.jpg}
-                \end{center}
             \end{frame}
 
     \section{État de l'art}
+        \begin{frame}
+            \frametitle{Sommaire}
+            \tableofcontents[currentsection, hideothersubsections]
+        \end{frame}
         \subsection{}
             \begin{frame}
                 \frametitle{Différentes catégories de systèmes de recommandation}
@@ -46,14 +52,85 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Approche basée sur le contenu}
-                Ici, les documents sont considérés
+                    Utilisation du profil des documents.
+                    pause[2]
+                    \only<2-4>{
+                        \begin{block}{Approche classique}
+                            \begin{itemize}
+                                \pause[3]
+                                \item Profilage utilisateur
+                                \pause[4]
+                                \item Recommandation
+                            \end{itemize}
+                        \end{block}
+                    }
+                    \pause[5]
+                    \only<5>{
+                        \begin{exampleblock}{Exemple: films}
+                            \begin{center}
+                                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                                    \hline
+                                    &Horreur&Épouvante&Action&Romance&Comédie\\
+                                    \hline
+                                    A&1& &1& &1\\
+                                    \hline
+                                    B&1&1&1& & \\
+                                    \hline
+                                    C& & &1& &1\\
+                                    \hline
+                                    D& & & &1& \\
+                                    \hline
+                                    E& & &1& & \\
+                                    \hline
+                                \end{tabular}
+                            \end{center}
+                        \end{exampleblock}
+                    }
             \end{frame}
             \begin{frame}
                 \frametitle{Filtrage collaboratif}
+                    Utilisation des interactions utilisateur.
+                    \pause[2]
+                    \only<2-5>{
+                        \begin{block}{Approche classique}
+                            \begin{itemize}
+                                \pause[3]
+                                \item Normalisation
+                                \pause[4]
+                                \item Similitudes utilisateurs
+                                \pause[5]
+                                \item Recommandation
+                            \end{itemize}
+                        \end{block}
+                    }
+                    \pause[6]
+                    \only<6>{
+                        \begin{exampleblock}{Exemple: films}
+                            \begin{center}
+                                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                                    \hline
+                                    &HP1&HP2&SW1&SW2&TW\\
+                                    \hline
+                                    A&4&5& & &1\\
+                                    \hline
+                                    B&3&4&5&5&2\\
+                                    \hline
+                                    C& & &2&2&5\\
+                                    \hline
+                                    D& &3& &4& \\
+                                    \hline
+                                \end{tabular}
+                            \end{center}
+                        \end{exampleblock}
+                    }
             \end{frame}
 
     \section{Versions}
         \subsection{v1 - POC}
+            \begin{frame}
+                \frametitle{Sommaire}
+                \tableofcontents[currentsection, currentsubsection]
+            \end{frame}
             \begin{frame}
             \frametitle{Problématiques}
             Version "Proof Of Concept"
@@ -140,6 +217,10 @@
             \end{center}
             \end{frame}
         \subsection{v2 - Multi-Utilisateur}
+            \begin{frame}
+                \frametitle{Sommaire}
+                \tableofcontents[currentsection, currentsubsection]
+            \end{frame}
         \begin{frame}
         \frametitle{Problématiques}
         Version Multi-Utilisateur
@@ -345,6 +426,10 @@
         }
         \end{frame}
         \subsection{v3 - Stockage}
+            \begin{frame}
+                \frametitle{Sommaire}
+                \tableofcontents[currentsection, currentsubsection]
+            \end{frame}
         \begin{frame}
         \frametitle{Problématiques}
         Version Stockage
@@ -503,7 +588,8 @@
         \end{frame}
 
     \section{Conclusion}
-        \begin{frame}
-            \frametitle{Conclusion}
-        \end{frame}
+        \section{}
+            \begin{frame}
+                \frametitle{Conclusion}
+            \end{frame}
 \end{document}
