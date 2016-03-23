@@ -18,20 +18,14 @@
         \titlepage{}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Sommaire}
-        \tableofcontents[hidesubsections]
-    \end{frame}
-
-
     \section{Introduction}
-        \begin{frame}
-            \frametitle{Sommaire}
-            \tableofcontents[currentsection, hideothersubsections]
-        \end{frame}
         \subsection{}
             \begin{frame}
                 \frametitle{Présentation du projet}
+            \end{frame}
+            \begin{frame}
+                \frametitle{Sommaire}
+                \tableofcontents[hidesubsections]
             \end{frame}
 
     \section{État de l'art}
@@ -52,9 +46,10 @@
             \end{frame}
             \begin{frame}
                 \frametitle{Approche basée sur le contenu}
+                \only<-4>{
                     Utilisation du profil des documents.
                     \pause[2]
-                    \only<2-4>{
+                    \visible<2-4>{
                         \begin{block}{Approche classique}
                             \begin{itemize}
                                 \pause[3]
@@ -64,34 +59,36 @@
                             \end{itemize}
                         \end{block}
                     }
-                    \pause[5]
-                    \only<5>{
-                        \begin{exampleblock}{Exemple: films}
-                            \begin{center}
-                                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-                                    \hline
-                                    &Horreur&Épouvante&Action&Romance&Comédie\\
-                                    \hline
-                                    A&1& &1& &1\\
-                                    \hline
-                                    B&1&1&1& & \\
-                                    \hline
-                                    C& & &1& &1\\
-                                    \hline
-                                    D& & & &1& \\
-                                    \hline
-                                    E& & &1& & \\
-                                    \hline
-                                \end{tabular}
-                            \end{center}
-                        \end{exampleblock}
-                    }
+                }
+                \pause[5]
+                \only<5>{
+                    \begin{exampleblock}{Exemple: films}
+                        \begin{center}
+                            \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                                \hline
+                                &Horreur&Épouvante&Action&Romance&Comédie\\
+                                \hline
+                                A&1& &1& &1\\
+                                \hline
+                                B&1&1&1& & \\
+                                \hline
+                                C& & &1& &1\\
+                                \hline
+                                D& & & &1& \\
+                                \hline
+                                E& & &1& & \\
+                                \hline
+                            \end{tabular}
+                        \end{center}
+                    \end{exampleblock}
+                }
             \end{frame}
             \begin{frame}
-                \frametitle{Filtrage collaboratif}
+                \frametitle{Approche basée sur les utilisateurs}
+                \only<-5>{
                     Utilisation des interactions utilisateur.
                     \pause[2]
-                    \only<2-5>{
+                    \visible<2-5>{
                         \begin{block}{Approche classique}
                             \begin{itemize}
                                 \pause[3]
@@ -103,26 +100,67 @@
                             \end{itemize}
                         \end{block}
                     }
-                    \pause[6]
-                    \only<6>{
-                        \begin{exampleblock}{Exemple: films}
-                            \begin{center}
-                                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-                                    \hline
-                                    &HP1&HP2&SW1&SW2&TW\\
-                                    \hline
-                                    A&4&5& & &1\\
-                                    \hline
-                                    B&3&4&5&5&2\\
-                                    \hline
-                                    C& & &2&2&5\\
-                                    \hline
-                                    D& &3& &4& \\
-                                    \hline
-                                \end{tabular}
-                            \end{center}
-                        \end{exampleblock}
-                    }
+                }
+                \pause[6]
+                \only<6>{
+                    \begin{exampleblock}{Exemple: films}
+                        \begin{center}
+                            \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                                \hline
+                                &HP1&HP2&SW1&SW2&TW\\
+                                \hline
+                                A&4&5& & &1\\
+                                \hline
+                                B&3&4&5&5&2\\
+                                \hline
+                                C& & &2&2&5\\
+                                \hline
+                                D& &3& &4& \\
+                                \hline
+                            \end{tabular}
+                        \end{center}
+                    \end{exampleblock}
+                }
+            \end{frame}
+            \begin{frame}
+                \frametitle{Avantages/Inconvénient}
+                \begin{columns}[t]
+                    \begin{column}{4cm}
+                        \begin{block}{Contenu}
+                            \pause
+                            Avantages:
+                            \begin{itemize}
+                                \pause
+                                \item Recommandation nouveaux objets
+                                \pause
+                                \item Utilisable à froid
+                            \end{itemize}
+                            \pause
+                            Inconvénients:
+                            \begin{itemize}
+                                \pause
+                            \item Nécessité de caractérisation des objets
+                            \end{itemize}
+                        \end{block}
+                    \end{column}
+                    \pause
+                    \begin{column}{4cm}
+                        \begin{block}{Utilisateurs}
+                        \pause
+                        Avantages:
+                        \begin{itemize}
+                            \pause
+                            \item Pas de caractérisation nécessaire
+                        \end{itemize}
+                        \pause
+                        Inconvénients:
+                        \begin{itemize}
+                            \pause
+                            \item Démarrage à froid impossible
+                        \end{itemize}
+                        \end{block}
+                    \end{column}
+                \end{columns}
             \end{frame}
 
     \section{Versions}
