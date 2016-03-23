@@ -1,0 +1,68 @@
+@startuml
+    !include skin
+package DAO{
+    class DAOVector{
+    }
+    class DAOUser{
+    }
+    class DAOOther{
+    }
+    class DAOMarkov{
+    }
+    class DAOKMeans{
+    }
+    class DAOGroup{
+    }
+    class DAOCategory{
+    }
+    class DAO{
+        - DAOGroup daoGroup
+        - DAOCategory daoCategory
+        - DAOKMeans daoKMeans
+        - DAOMarkov daoMarkov
+        - DAOOther daoOther
+        - DAOUser daoUser
+        - DAOVector daoVector
+        - int dureeDeVie
+        - double pourcentageMinUserVector
+        - DAO()
+        - void changeNumberOfGroup(int n)
+        - Integer getNbGroup()
+        - void recomputeKMeans()
+        - HashMap<String, String> getUsersGroups()
+        - boolean userExists(String name)
+        - int addUser(String name)
+        - String getUserGroup(String user)
+        - Integer getNbUser()
+        - List<String> getUserNames()
+        - int addSession(String user, List<String> session)
+        - Vector<HashMap<String, Double>> guessNextDocs(String user, Vector<String> session)
+        - int addDocument(String doc, String categorie)
+        - boolean docExists(String doc)
+        - HashMap<String, String> getDocsCategories()
+        - int getCategorie(String doc)
+        - List<String> getCategories()
+        - int addCategorie(String categorie)
+        - void clearDB()
+        - boolean isConnected()
+    }
+}
+package test{
+    class ConsoleDAO{
+        + {static} void main()
+        - {static} void testRandom()
+        - {static} void testUnit()
+        - {static} void console()
+    }
+}
+
+DAO o-- DAOVector
+DAO o-- DAOUser
+DAO o-- DAOOther
+DAO o-- DAOMarkov
+DAO o-- DAOKMeans
+DAO o-- DAOGroup
+DAO o-- DAOCategory
+ConsoleDAO o-- DAO
+
+@enduml
