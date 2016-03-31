@@ -8,10 +8,27 @@
         \item \textbf{Stockage} (Gestion optimale de la mise en mémoire morte des données)
     \end{enumerate}.\\
 
-    Pour chacune de ces problématiques, nous allons détailler les différentes motivations pour cette version, ainsi que les techniques employées pour les résoudre.
+    Pour chacune de ces problématiques, nous allons détailler les différentes motivations pour cette phase, ainsi que les techniques employées pour les résoudre.
 
     \section{Proof-of-Concept}
         \subsection{Motivations}
+            Cette première phase a pour but de mettre en place un système nous permettant une réalisation simplifié du but du projet.\\
+            Pour se simplifier la tâche, nous allons nous fixer quelque limitations pour cette phase:
+            \begin{itemize}
+                \item Gestion d'\textbf{un seul utilisateur}
+            \end{itemize}.\\
+
+            Avant de commencer à raisonner sur cette phase, posons quelques définitions:
+            \begin{description}
+                \item[Document:] Objet représenté par une \underline{adresse unique}
+                \item[Session:] Séquence ordonnée de \textit{documents}, représentant le cheminement d'un utilisateur parmi des documents
+            \end{description}
+            
+            Que va-t-il nous rester comme buts?
+            \begin{itemize}
+                \item Retenir les sessions
+                \item Prédire des documents futurs à partir de ces sessions
+            \end{itemize}
         \subsection{Résolution}
     \section{Multi-Utilisateur}
         \subsection{Motivations}

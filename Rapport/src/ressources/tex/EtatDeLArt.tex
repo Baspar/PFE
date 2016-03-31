@@ -6,7 +6,7 @@
     \end{enumerate}
 
     \section{Recommandation basée sur le contenu}
-        Dans le cas de la recommandation basée sur le contenu, tout est fait pour recommander les documents en se basant sur leur \textbf{caractéristiques} plus que sur leur utilisation.\\
+    Dans le cas de la recommandation basée sur le contenu, tout est fait pour recommander les documents (Ou "items" en général) en se basant sur leur \textbf{caractéristiques} plus que sur leur utilisation.\\
         À partir d'une session de documents, ou d'un document seul, on va faire des propositions de documents qui se baseront sur deux choses principales:
         \begin{itemize}
             \item Les \textbf{caractéristiques des documents}
@@ -59,7 +59,8 @@
                 Dans les deux cas, ils seraient pris à nouveau en compte lors du calcul des nouvelles probabilités.
             \subsubsection{Limites et incompatibilités}
                 Ce système peut poser certains problèmes dans notre utilisation, mais qui peuvent être contournés: %TODO
-        \subsection{Classification naïve bayésienne}
+        \subsection{}
+        %TODO
     \section{Recommandation basée sur les utilisateurs}
         Dans le cas de la recommandation basé sur les utilisateurs, les documents (ou "items" en général) ne sont plus considérés comme ce qu'ils sont, mais comme de \textbf{simples objets}.\\
         Pour tenter de faire une recommandation en partant d'une session de documents, on va maintenant s'intéresser \textbf{aux interactions utilisateurs sur ces documents}, plutôt que les documents en eux même.\\
@@ -69,3 +70,17 @@
             \item Les retours \textbf{implicites} (Notes, like, classement, \ldots)
             \item Les retours \textbf{explicites} (Recherches, \textbf{parcours}, \ldots)
         \end{itemize}.\\
+
+        Par la suite, un profil utilisateur est crée grâce à ces informations.\\
+        Pour trouver les items pertinents, il suffit de réutiliser les profils utilisateur pour créer un "groupement" d'utilisateurs, et d'exploiter les sessions des utilisateurs de notre groupement pour trouver lesquels nous intéresseraient.\\
+        \subsection{Classification}
+            %TODO
+        \subsection{Inconvénient}
+            L'inconvénient majeur de ce type de recommandation est l'\textbf{impossibilité de démarrage à froid}.\\
+            En effet, a contrario de la recommandation basée sur le contenu, deux problèmes se posent vis-à-vis de l'insertion dans le système de nouvelles entités:
+            \begin{itemize}
+                \item L'insertion de nouveaux \textbf{items}.\\
+                    Dans ce cas, les items ne seront jamais utilisé dans aucune session, et donc ne seront jamais recommandés par le système.
+                \item L'insertion de nouveaux \textbf{utilisateurs}.\\
+                    Un nouvel utilisateur aura besoin d'avoir un certain nombre de session pour avoir un profil utilisateur lui correspondant réellement. De ce fait, une recommandation correcte prendra un certain temps.
+            \end{itemize}
