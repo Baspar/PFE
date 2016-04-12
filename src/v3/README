@@ -2,6 +2,7 @@ Dépendance:
    - ant
    - Neo4j
    - java
+   - javadoc (Pour la documentation)
 
 Mise en place:
     En premier lieu, il vous faudra lancer Neo4j (Manipulation variable selon votre OS, par exemple "sudo systemctl start neo4j").
@@ -12,4 +13,4 @@ Utilisation:
     Pour avoir une aide sur les commandes disponibles, tapez HELP
 
 Documentation:
-
+    Pour generer la documentation de la DAO, allez dans le dossier v3/src, et tapez "javadoc dao test", ou "javadoc -private dao test" (Si vous souhaitez une documentation sur les méthode privée)
