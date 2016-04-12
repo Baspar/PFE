@@ -1,0 +1,15 @@
+Dépendance:
+   - ant
+   - Neo4j
+   - java
+
+Mise en place:
+    En premier lieu, il vous faudra lancer Neo4j (Manipulation variable selon votre OS, par exemple "sudo systemctl start neo4j").
+    Pour compiler, tapez "ant" à la racine du dossier v3.
+
+Utilisation:
+    Rendre le fichier exec.sh executable, et lancez le.
+    Pour avoir une aide sur les commandes disponibles, tapez HELP
+
+Documentation:
+
