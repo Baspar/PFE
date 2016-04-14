@@ -1,0 +1,60 @@
+@startuml
+    !include skin
+
+    class User{
+        - documents : Documents
+        - markovs : AllKthMarkov
+        - name : String
+        - sessions : Vector<Vector<Document>>
+        - tailleSessionsMax : int
+        - userVector : Vector<Double>
+    }
+    class MarkovNode{
+        - child : Hashtable<MarkovNode,Integer>
+        - maChaineDoc : Vector<Document>
+        - total : int
+    }
+    class Main{
+        -Documents document
+        -KMeans kMeans
+    }
+    class AllKthMarkov{
+        - K : int
+        - markovs : Vector<KthMarkov>
+    }
+    class KthMarkov{
+        - nodes : Hashtable<Vector<Document>,MarkovNode>
+    }
+    class KMeans{
+        - appartenanceGroup : Hashtable<User,Group>
+        - groups : Vector<Group>
+        - K : int
+        - users : Vector<User>
+    }
+    class Group{
+        - center : Vector<Double>
+        - kThMarkov : AllKthMarkov
+        - nbCategories : int
+        - users : Vector<User>
+    }
+    class Documents{
+        - documentsByCategory : Hashtable<Integer,Vector<Document>>
+        - documentsByChemin : Hashtable<String,Document>
+    }
+    class Document{
+        - categorie : int
+        - chemin : String
+    }
+
+
+    KMeans *-- Group
+    KMeans o-- User
+    Group *- User
+    Documents o-- Document
+    User o-- AllKthMarkov
+    KthMarkov -o AllKthMarkov
+    KthMarkov o-up- MarkovNode
+    MarkovNode *-- MarkovNode
+    Main o-- KMeans
+    Main o-- Documents
+@enduml

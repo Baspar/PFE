@@ -1,0 +1,22 @@
+@startuml
+    !include skin
+    class User{
+        -myMarkovs : AllKthMarkov
+    }
+    class AllKthMarkov{
+        -K : int
+        -markovs : vector<KthMarkov>
+    }
+    class MarkovNode{
+        -child : map<MarkovNode*,int>
+        -maChaineDoc : vector<int>
+        -total : int
+    }
+    class KthMarkov{
+        -nodes : map<vector<int> ,MarkovNode>
+    }
+AllKthMarkov "1" -o "1" User
+AllKthMarkov "1" o-- "4" KthMarkov
+KthMarkov "1" o- "*" MarkovNode
+MarkovNode "1" *- "*" MarkovNode
+@enduml

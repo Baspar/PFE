@@ -1,0 +1,150 @@
+@startuml
+    !include skin
+
+    class User{
+        ==<b>Attributes</b>==
+            - documents : Documents
+            - markovs : AllKthMarkov
+            - name : String
+            - sessions : Vector<Vector<Document>>
+            - tailleSessionsMax : int
+            - userVector : Vector<Double>
+        ==<b>Constructors</b>==
+            +User(int max, Documents documents, String name)
+        ==<b>Getters</b>==
+            +getMarkovs() : AllKthMarkov
+            +getName() : String
+            +getUserVector() : Vector<Double>
+        ==<b>Methods</b>==
+            +ajouterSession(Vector<Document> session) : void
+            +recomputeUserVector() : void
+    }
+    class MarkovNode{
+        ==<b>Attributes</b>==
+            - child : Hashtable<MarkovNode,Integer>
+            - maChaineDoc : Vector<Document>
+            - total : int
+        ==<b>Constructors</b>==
+            +MarkovNode(Vector<Document> chaine)
+        ==<b>Setters</b>==
+            +setChild(MarkovNode markovNode, Integer nb) : void
+            +setTotal(int total) : void
+        ==<b>Getters</b>==
+            +getChild() : Hashtable<MarkovNode,Integer>
+            +getLastDoc() : Document
+            +getMaChaineDoc() : Vector<Document>
+            +getNbChild() : int
+            +getTotal() : int
+        ==<b>Methods</b>==
+            +addChild(MarkovNode node, int poids) : void
+            +guessNextDocs() : Vector<Pair<Document,Float>>
+            +renforcerChaine(MarkovNode nextChaine, int i) : void
+            +renforcerChaine(MarkovNode nextChaine) : void
+    }
+    class Main{
+        ==<b>Methods</b>==
+            +main(String args[]) : void
+    }
+    class AllKthMarkov{
+        ==<b>Attributes</b>==
+            - K : int
+            - markovs : Vector<KthMarkov>
+        ==<b>Constructors</b>==
+            +AllKthMarkov(int K)
+        ==<b>Getters</b>==
+            +getK() : int
+            +getMarkov(int i) : KthMarkov
+        ==<b>Methods</b>==
+            +add(AllKthMarkov all) : void
+            +ajouterDocs(int K, Vector<Document> oldDocs, Document nextDoc) : void
+            +ajouterSession(Vector<Document> session) : void
+            +guessNextDocs(Vector<Document> session) : Float>>>
+            +toSave() : String
+            +toUML() : String
+    }
+    class KthMarkov{
+        ==<b>Attributes</b>==
+            - nodes : Hashtable<Vector<Document>,MarkovNode>
+        ==<b>Constructors</b>==
+            +KthMarkov()
+        ==<b>Getters</b>==
+            +getDocs(Vector<Document> docs) : MarkovNode
+            +getNodes() : Enumeration<MarkovNode>
+        ==<b>Methods</b>==
+            +add(KthMarkov markov) : void
+            +renforcerChaine(Vector<Document> oldDocs, Document nextDoc) : void
+            +toSave() : String
+            +toUML() : String
+    }
+    class KMeans{
+        ==<b>Attributes</b>==
+            - appartenanceGroup : Hashtable<User,Group>
+            - groups : Vector<Group>
+            - K : int
+            - users : Vector<User>
+        ==<b>Constructors</b>==
+            +KMeans(Vector<User> users, int K, int nbCategories)
+        ==<b>Methods</b>==
+            +afficher() : void
+            +compute() : void
+            +guessNextDocs(User user,Vector<Document> session) : Float>>>
+            +whereIs(User user) : Group
+    }
+    class Group{
+        ==<b>Attributes</b>==
+            - center : Vector<Double>
+            - kThMarkov : AllKthMarkov
+            - nbCategories : int
+            - users : Vector<User>
+        ==<b>Constructors</b>==
+            +Group(int nbCategories)
+        ==<b>Getters</b>==
+            +getCenter() : Vector<Double>
+            +getMarkovs() : AllKthMarkov
+            +getUsers() : Vector<User>
+        ==<b>Methods</b>==
+            +addUser(User user) : void
+            +afficher() : void
+            +distance(User user) : double
+            +removeUser(User user) : void
+            +updateCenter() : void
+            +updateMarkovs() : void
+    }
+    class Documents{
+        ==<b>Attributes</b>==
+            - documentsByCategory : Hashtable<Integer,Vector<Document>>
+            - documentsByChemin : Hashtable<String,Document>
+        ==<b>Constructors</b>==
+            +Documents()
+        ==<b>Getters</b>==
+            +getDocumentsByChemin() : Hashtable<String,Document>
+            +getDocument(String chemin) : Document
+            +getNbCategories() : int
+        ==<b>Methods</b>==
+            +createNewDoc(String chemin, int categorie) : void
+    }
+    class Document{
+        ==<b>Attributes</b>==
+            - categorie : int
+            - chemin : String
+        ==<b>Constructors</b>==
+            +Document(String chemin, int categorie)
+        ==<b>Getters</b>==
+            +getCategorie() : int
+            +getChemin() : String
+        ==<b>Methods</b>==
+            +toString() : String
+    }
+
+
+    KMeans *-- Group
+    KMeans o-- User
+    Group *- User
+    Documents o-- Document
+    User o-- AllKthMarkov
+    KthMarkov -o AllKthMarkov
+    KthMarkov o-up- MarkovNode
+    MarkovNode *-- MarkovNode
+    Main o-- KMeans
+    Main o-- Documents
+@enduml

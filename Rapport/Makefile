@@ -1,4 +1,10 @@
-all: texPFE mvdoc pseudoclean
+UML=$(wildcard src/ressources/graph/*.uml)
+PNG=$(UML:.uml=.png)
+
+all: $(PNG) texPFE mvdoc pseudoclean
+
+%.png: %.uml
+	java -jar src/ressources/graph/plantuml.jar $<
 
 texPFE:
 	cd src; pdflatex PFE.tex;pdflatex PFE.tex; cd ..

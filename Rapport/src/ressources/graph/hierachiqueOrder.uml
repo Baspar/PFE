@@ -1,0 +1,11 @@
+@startuml
+    !include skin
+    (a) --> (ab)
+    (b) --> (ab)
+    (c) --> (cde)
+    (d) --> (de)
+    (e) --> (de)
+    (de)--> (cde)
+    (ab)--> (abcde)
+    (cde)--> (abcde)
+@enduml

@@ -36,11 +36,68 @@
             \end{center}.\\
 
             Les processus de Markov nous permettent de modéliser les probabilité de passage d'un état à un autre, sachant que cela ne dépend que des n derniers états\\
-            Grâce à cela, nous pouvons modéliser les déplacement entre les documents. Sachant qu'il existe différent ordre de Markov, 
+            Grâce à cela, nous pouvons modéliser les déplacement entre les documents. Sachant qu'il existe différent ordre de Markov qui correspondront chacune au nombre de documents dont dépendra l'état suivant.\\
 
+            \begin{figure}[h]
+               \centering
+               \includegraphics[scale=0.5]{ressources/graph/Markov1.png}
+               \caption{Markov d'ordre 1}
+            \end{figure}
+            \begin{figure}[h]
+               \centering
+               \includegraphics[scale=0.5]{ressources/graph/Markov3.png}
+               \caption{Markov d'ordre 3}
+            \end{figure}
 
+            Les schémas ci-dessus sont une représentation graphique de deux chaines de Markov, les Graphes de chaine de Markov.\\
+            En construisant de tels systèmes, il devient aisé en connaissant les $n$ éléments par lesquels nous sommes passé, et en utilisant une Markov d'ordre $n$, de prédire quels seraient les documents les plus pertinent.\\
+
+            En pratique, nous savons comment prédire à partir d'une Markov donnée, et nous pouvons aisément construire des Markovs d'un ordre donnée avec une ou des sessions.\\
+            Cependant, cela amène à une question:
+            \begin{center}
+                Quelles chaine(s) de Markov considérer?
+            \end{center}.\\
+
+            Il y a deux inconnues à cette question:
+            \begin{itemize}
+                \item Combien?
+                \item Lesquelles?
+            \end{itemize}.\\
+
+            \large{Lesquelles?}\\
+            \normalsize
+            Du fait que nous possédons une multitude de Markovs (Pour des session de longueur N, on peut construire une markov d'ordre N-1 maximum), combien en utiliser?\\
+            Il est clair qu'en utiliser qu'une seule ne serait pas pertinent. Pourquoi le document à suivre ne dépendrait que des 2 documents précedents? Ou des 3?\\
+            Il faut donc considérer \textbf{les markovs d'ordre 1 jusqu'à un certain ordre: All-kth-Markov}.
+
+            \large{Combien?}
+            \normalsize
+            La question qui se pose maintenant est jusqu'à quel ordre?\\
+            Pour se faire, reposons nous sur un domaine qui utilise déjà fortement les chaines de Markov: \textbf{le Natural Language Processing} (Traitement du langage naturel).\\
+            Dans ce dernier, les chaines de Markov sont utilisé pour prédire les mots suivant en se basant sur un ensemble de phrase donnée en je de test.
+
+            \begin{figure}[h]
+               \centering
+               \includegraphics[scale=0.5]{ressources/graph/NLP.png}
+               \caption{Markov d'ordre 1 chargée avec les phrases "Je mange des légumes" et "Je conduis des voitures"}
+            \end{figure}.\\
+
+            Dans ce domaine, ou les chaines de Markov d'ordre $n$ sont apellées $n$-grammes, il est communément admis que considérer des $n$-grammes d'ordre supérieurs a 4 n'apportait rien.\\
+            Nous allons donc nous fixer le même chiffre, tout en se gardant une assez grande flexibilité dans le code pour modifier ce chiffre facilement.\\
+
+            Ceci vient conclure cette première version, où tout les objectifs sont atteints.
     \section{Multi-Utilisateur}
         \subsection{Motivations}
+          Cette version vient prendre le relai sur la premier.\\
+          Son but est simple: réutiliser l'idée qui à été amenée avec la version 1, et la rendre adaptée pour plusieurs utilisateurs.\\
+
+          La manière la plus simple de rendre le principe optimisé pour le traitement de plusieurs utilisateurs serait de \textbf{grouper les utilisateurs}.
+
+          Cela demande cependant plusieurs phases de réflexion pour répondre notamment aux questions suivantes:
+          \begin{itemize}
+            \item De quelle manière grouper les utilisateur?
+            \item Quels utilisateurs doivent être regroupés?
+          \end{itemize}
         \subsection{Résolution}
     \section{Stockage}
         \subsection{Motivations}

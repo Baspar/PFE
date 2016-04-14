@@ -1,0 +1,6 @@
+@startuml
+    !include skin
+    (Doc1) --> (Doc3) : 1
+    (Doc3) --> (Doc4) : 1
+    (Doc4) --> (Doc5) : 1
+@enduml

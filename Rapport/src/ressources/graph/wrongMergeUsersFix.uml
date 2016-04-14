@@ -1,0 +1,9 @@
+@startuml
+    !include skin
+    (Doc1) --> (Doc2) : 0.5
+    (Doc1) --> (Doc3) : 0.5
+    (Doc2) --> (Doc4) : 1
+    (Doc3) --> (Doc4) : 1
+    (Doc4) --> (Doc5) : 0.6
+    (Doc4) --> (Doc6) : 0.4
+@enduml
