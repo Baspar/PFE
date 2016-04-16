@@ -88,17 +88,60 @@
             Ceci vient conclure cette première version, où tout les objectifs sont atteints.
     \section{Multi-Utilisateur}
         \subsection{Motivations}
-          Cette version vient prendre le relai sur la premier.\\
-          Son but est simple: réutiliser l'idée qui à été amenée avec la version 1, et la rendre adaptée pour plusieurs utilisateurs.\\
+            Cette version vient prendre le relai sur la premier.\\
+            Son but est simple: réutiliser l'idée qui à été amenée avec la version 1, et la rendre adaptée pour plusieurs utilisateurs.\\
 
-          La manière la plus simple de rendre le principe optimisé pour le traitement de plusieurs utilisateurs serait de \textbf{grouper les utilisateurs}.
+            La manière la plus simple de rendre le principe optimisé pour le traitement de plusieurs utilisateurs serait de \textbf{grouper les utilisateurs}.
 
-          Cela demande cependant plusieurs phases de réflexion pour répondre notamment aux questions suivantes:
-          \begin{itemize}
-            \item De quelle manière grouper les utilisateur?
-            \item Quels utilisateurs doivent être regroupés?
-          \end{itemize}
+            Cela demande cependant plusieurs phases de réflexion pour répondre notamment aux questions suivantes:
+            \begin{itemize}
+                \item De quelle manière grouper les utilisateur?
+                \item Quels utilisateurs doivent être regroupés?
+                \item Comment exploiter ces regroupement?
+            \end{itemize}
         \subsection{Résolution}
+            En premier lieu, supposons que nous savons quels utilisateurs grouper. Comment les grouper, tout en gardant une lecture d'information sur ces derniers?\\
+            Notre représentation des utilisateur se fait au final uniquement par les All-Kth-Markov, il faut donc trouver un moyen de les combiner facilement.\\
+            
+            En prenant les markovs selon leur forme de base, une première approche est possible: superposer les Markovs, et faire la moyenne lors de la superposition de deux arcs équivalents.
+            \begin{figure}[h]
+                \centering
+                \begin{minipage}{0.3\textwidth}
+                    \includegraphics[scale=0.5]{ressources/graph/wrongMergeUser1.png}
+                    \caption{Utilisateur 1}
+                \end{minipage}
+                \begin{minipage}{0.3\textwidth}
+                    \includegraphics[scale=0.5]{ressources/graph/wrongMergeUser2.png}
+                    \caption{Utilisateur 2}
+                \end{minipage}
+                \begin{minipage}{0.3\textwidth}
+                    \includegraphics[scale=0.5]{ressources/graph/wrongMergeUsers.png}
+                    \caption{Mélange utilisateur}
+                \end{minipage}
+            \end{figure}.\\
+
+            Cependant, la markov n'est plus verifiée: on a des arcs sortants dont la sommes est supérieure à 1 (Doc4 et Doc1 dans notre cas).\\
+            Une parade simple à se problème est de diviser par la somme des arcs sortant. Dans le cas du Doc4, on diviserai par $0.5+0.75=1.25$, ce qui nous donne:
+            \begin{figure}[h]
+                \centering
+                \includegraphics[scale=0.5]{ressources/graph/wrongMergeUsersFix.png}
+            \end{figure}
+
+
+            Le but premier du groupement serait d'arriver à \textbf{exploiter les utilisations de plusieurs utilisateurs pour faire de meilleures prédiction}.\\
+            Cela sous-entends de regrouper des utilisateurs proche en intérêt. Tentons donc de définir une "distance", ou des coordonnées d'intérêt utilisateur.\\
+
+            Une première approche serait simplement de créer un "vecteur session utilisateur moyen". On peut le décomposer en les étapes suivantes:
+            \begin{enumerate}
+                \item On prend chaque session d'un utilisateur sous forme de liste
+                \item On "moyenne" toute ces listes en une seule
+                \item On compare les coordonnées de ces vecteur utilisateur pour créer des groupes homogènes
+            \end{enumerate}.\\
+
+            Cette technique pourrait s'avérer très efficace, cependant elle possède un inconvénient majeur: \textbf{comment combiner des vecteurs de taille variable?}.\\
+            En effet, chaque session utilisateur est de taille différente, pour en créer une "moyenne", cela peut s'avérer complexe. Le même problème se pose lorsque l'on sera amené à comparer 
+
+
     \section{Stockage}
         \subsection{Motivations}
         \subsection{Résolution}
